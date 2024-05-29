@@ -17,6 +17,11 @@ study_data = get_study_data()
 # Dictionary to keep track of users and their progress and current event_IDs for both events
 user_progress = {}
 
+# TODO:
+# - Change route names
+# - Add next events be probabilistic based on ELO ratings
+# - Maybe in the post also add requirement to add the loser ID for sanity check
+
 def get_next_events(user_id):
     if user_id not in user_progress:
         user_progress[user_id] = [0, []]
@@ -45,14 +50,35 @@ def get_next_events(user_id):
 # this route gets the next question for the user
 @app.route('/next', methods=['GET'])
 def get_next_question():
+    # The user ID is handled on the frontend
     user_id = request.args.get('user_id')
+
+    # Check if the user ID is provided
     if not user_id:
         return jsonify({"error": "User ID not provided"}), 400
     
+    # Check if the user has completed the study
+    if user_id in user_progress and user_progress[user_id][0] >= number_of_questions:
+        return jsonify({"message": "Study completed"}), 200
+
+    # Check if the user has already got the next events assigned
+    # If so continue with the same events as they have not been submitted yet
+    if user_id in user_progress and user_progress[user_id][1] != []:
+        next_events = []
+        for i, event_id in enumerate(user_progress[user_id][1]):
+            event_details = study_data.loc[study_data['event_ID'] == event_id, 'event_details'].values[0]
+            next_events.append({
+                f"event{i}_details": event_details,
+                f"event{i}_ID": event_id
+            })
+
+        return jsonify(next_events), 200
+
     # Get the next questions
     # If the next questions are empty, the user has completed the study
     next_events = get_next_events(user_id)
 
+    # If the next questions are empty, the user has completed the study
     if next_events == []:
         return jsonify({"message": "Study completed"}), 200
     
@@ -61,7 +87,7 @@ def get_next_question():
 
 @app.route('/submit', methods=['POST'])
 def submit_answer():
-    # Get the user ID from the request
+    # The user ID is handled on the frontend
     user_id = request.json.get('user_id')
 
     # Check if the user ID is provided
@@ -73,15 +99,22 @@ def submit_answer():
         return jsonify({"error": "Answer not provided"}), 400
     loser_id = user_progress[user_id][1][0] if user_progress[user_id][1][0] != winner_id else user_progress[user_id][1][1]
 
+    # Make sure the winner ID and loser ID are the sane as the assigned event IDs
+    if winner_id not in user_progress[user_id][1]:
+        return jsonify({"error": "Invalid answer"}), 400
+
     # Handle the submitted answer here
     print(f"Received answer from {user_id}: {winner_id}")
 
-    # Update the user progress and ELO ratings
+    # Update the user progress
     user_progress[user_id][0] += 1
+    user_progress[user_id][1] = []
+
+    # Get the ELO ratings of the winner and loser
     winner_elo = study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating']
     loser_elo = study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating']
 
-    # Update the ELO ratings
+    # Get updated ELO ratings
     winner_new_elo, loser_new_elo = update_elos(winner_elo, loser_elo)
 
     # Print the changes (event_IDs and ELO ratings new and old)
@@ -92,9 +125,10 @@ def submit_answer():
     study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'] = winner_new_elo
     study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating'] = loser_new_elo
 
-    # Get the next questions
+    # Get the next set of events
     next_events = get_next_events(user_id)
 
+    # If the next questions are empty, the user has completed the study
     if next_events == []:
         return jsonify({"message": "Study completed"}), 200
 
