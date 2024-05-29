@@ -27,7 +27,7 @@ def get_study_data():
 
 # Just a simple function to update the ELO ratings
 def update_elos(winner_elo, loser_elo):
-    # Constants
+    # Constants for the ELO rating calculation (Try to experiment with these values)
     K = 32
     E = 1 / (1 + 10 ** ((loser_elo - winner_elo) / 400))
 
