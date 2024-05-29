@@ -25,6 +25,7 @@ def get_study_data():
     
     return study_data
 
+# Just a simple function to update the ELO ratings
 def update_elos(winner_elo, loser_elo):
     # Constants
     K = 32
