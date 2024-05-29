@@ -106,6 +106,9 @@ def submit_answer():
     # Handle the submitted answer here
     print(f"Received answer from {user_id}: {winner_id}")
 
+    if user_id not in user_progress:
+        return jsonify({"error": "User ID not found"}), 404
+
     # Update the user progress
     user_progress[user_id][0] += 1
     user_progress[user_id][1] = []
@@ -133,6 +136,12 @@ def submit_answer():
         return jsonify({"message": "Study completed"}), 200
 
     return jsonify(next_events), 200
+
+@app.route('/', methods=['GET'])
+def home():
+    user_id = request.args.get('user_id')
+    with app.test_request_context('/next', method='GET', query_string={'user_id': user_id}):
+        return get_next_question()
 
 if __name__ == '__main__':
     app.run(debug=True)
