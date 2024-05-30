@@ -9,7 +9,7 @@ import random
 app = Flask(__name__)
 CORS(app)
 app.secret_key = 'your_secret_key'
-number_of_questions = 2
+number_of_questions = 10
 
 # Load the study data as pandas DataFrame
 study_data = get_study_data()
@@ -64,20 +64,15 @@ def get_next():
     # Check if the user has already got the next events assigned
     # If so continue with the same events as they have not been submitted yet
     if user_id in user_progress and user_progress[user_id][1] != []:
-        # next_events = []
-        # for i, event_id in enumerate(user_progress[user_id][1]):
-        #     event_details = study_data.loc[study_data['event_ID'] == event_id, 'event_details'].values[0]
-        #     next_events.append({
-        #         f"event{i}_details": event_details,
-        #         f"event{i}_ID": event_id
-        #     })
         
         next_events_dict = {}
-        for i, next_event in enumerate(user_progress[user_id][1]):
+        next_events = [study_data.iloc[event_id] for event_id in user_progress[user_id][1]]
+
+        for i, next_event in enumerate(next_events):
             next_events_dict[f"event{i}_details"] = str(next_event['event_details'])
             next_events_dict[f"event{i}_ID"] = int(next_event['event_ID'])
 
-        return jsonify(next_events_dict), 200
+        return jsonify({'events': next_events_dict}), 200
 
     # Get the next questions
     # If the next questions are empty, the user has completed the study
@@ -87,7 +82,7 @@ def get_next():
     if not next_events:
         return jsonify({"message": "Study completed"}), 200
     
-    return jsonify(next_events), 200
+    return jsonify({'events': next_events}), 200
 
 
 @app.route('/submit', methods=['POST'])
@@ -140,7 +135,7 @@ def submit_answer():
     if not next_events:
         return jsonify({"message": "Study completed"}), 200
 
-    return jsonify(next_events), 200
+    return jsonify({'events': next_events}), 200
 
 @app.route('/', methods=['GET'])
 def home():
