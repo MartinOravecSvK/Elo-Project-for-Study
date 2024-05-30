@@ -15,7 +15,8 @@ function App() {
         try {
             const response = await fetch(`http://localhost:5000/next?user_id=${userId}`);
             const data = await response.json();
-            setEvents(data);
+            setEvents([data.events] || [])
+            console.log(events)
         } catch (error) {
             console.error('Error fetching events:', error);
         }
@@ -34,7 +35,7 @@ function App() {
                 }),
             });
             const data = await response.json();
-            setEvents(data.next_events || []);
+            setEvents([data.events] || [])
         } catch (error) {
             console.error('Error submitting answer:', error);
         }
@@ -51,7 +52,7 @@ function App() {
                     </div>
                     <div className="event">
                         <h2>{events[1].event1_details}</h2>
-                        <button onClick={() => submitAnswer(events[1].event1_ID)}>Choose This Event</button>
+                        <button onClick={() => submitAnswer(events[0].event1_ID)}>Choose This Event</button>
                     </div>
                 </div>
             ) : (
