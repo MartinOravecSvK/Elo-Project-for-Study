@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 
 function App() {
-    const [events, setEvents] = useState([]);
+    const [events, setEvents] = useState({});
 
     // Replace 'some-unique-user-id' with a unique identifier for the user (generate some and store it in browser's local storage)
     const userId = 'some-unique-user-id';
@@ -15,8 +15,14 @@ function App() {
         try {
             const response = await fetch(`http://localhost:5000/next?user_id=${userId}`);
             const data = await response.json();
-            setEvents([data.events] || [])
-            console.log(events)
+            console.log("DATA: ", data)
+            if (data.events) {
+                setEvents(data.events);
+            } else {
+                setEvents({});
+            }
+
+            console.log("EVENTS: ", events)
         } catch (error) {
             console.error('Error fetching events:', error);
         }
@@ -35,7 +41,11 @@ function App() {
                 }),
             });
             const data = await response.json();
-            setEvents([data.events] || [])
+            if (data.events) {
+                setEvents(data.events);
+            } else {    
+                setEvents({});
+            }
         } catch (error) {
             console.error('Error submitting answer:', error);
         }
@@ -44,15 +54,15 @@ function App() {
     return (
         <div className="App">
             <h1>Choose the Event</h1>
-            {events.length > 0 ? (
+            {events != {} ? (
                 <div className="events">
                     <div className="event">
-                        <h2>{events[0].event0_details}</h2>
-                        <button onClick={() => submitAnswer(events[0].event0_ID)}>Choose This Event</button>
+                        <h2>{events.event0_details}</h2>
+                        <button onClick={() => submitAnswer(events.event0_ID)}>Choose This Event</button>
                     </div>
                     <div className="event">
-                        <h2>{events[1].event1_details}</h2>
-                        <button onClick={() => submitAnswer(events[0].event1_ID)}>Choose This Event</button>
+                        <h2>{events.event1_details}</h2>
+                        <button onClick={() => submitAnswer(events.event1_ID)}>Choose This Event</button>
                     </div>
                 </div>
             ) : (
