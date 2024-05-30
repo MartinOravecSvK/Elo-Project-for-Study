@@ -9,7 +9,7 @@ import random
 app = Flask(__name__)
 CORS(app)
 app.secret_key = 'your_secret_key'
-number_of_questions = 10
+number_of_questions = 2
 
 # Load the study data as pandas DataFrame
 study_data = get_study_data()
@@ -21,7 +21,12 @@ user_progress = {}
 # - Change route names
 # - Add next events be probabilistic based on ELO ratings
 # - Maybe in the post also add requirement to add the loser ID for sanity check
-# - Add different status codes for different errors
+# - Test limits
+
+# Returns list of 2 DataFrame rows with event details
+def get_next_events_based_on_elo():
+    next_events = [study_data.loc[study_data['event_ID'] == random.randint(1, len(study_data))] for _ in range(2)]
+    return next_events
 
 def get_next_events(user_id):
     if user_id not in user_progress:
@@ -31,21 +36,19 @@ def get_next_events(user_id):
 
     # Check if the user has completed all the questions
     if current_completed >= number_of_questions:
-        # Handle the completion of the study using empty list as flag
         return {}
 
     # For now get 2 random even_details from study_data
     # Also right now you can get 2 same events
-    next_events = [study_data.iloc[random.randint(0, len(study_data) - 1)] for _ in range(2)]
+    next_events = get_next_events_based_on_elo()
 
-    # Set curret events for the user
-    user_progress[user_id][1] = [next_event['event_ID'] for next_event in next_events]
+    # Set curret events for the user using int(event_ID)s
+    user_progress[user_id][1] = [int(next_event['event_ID'].values[0]) for next_event in next_events]
 
     next_events_dict = {}
     for i, next_event in enumerate(next_events):
-        next_events_dict[f"event{i}_details"] = str(next_event['event_details'])
-        # Subtract 1 from the event_ID to match the first row index of the DataFrame
-        next_events_dict[f"event{i}_ID"] = int(next_event['event_ID'])-1
+        next_events_dict[f"event{i}_details"] = str(next_event['event_details'].values[0])
+        next_events_dict[f"event{i}_ID"] = int(next_event['event_ID'].values[0])
 
     return next_events_dict
 
@@ -66,14 +69,12 @@ def get_next():
     # Check if the user has already got the next events assigned
     # If so continue with the same events as they have not been submitted yet
     if user_id in user_progress and user_progress[user_id][1] != []:
-        
         next_events_dict = {}
-        next_events = [study_data.iloc[event_id] for event_id in user_progress[user_id][1]]
-
+        next_events = [study_data.loc[study_data['event_ID'] == event_id] for event_id in user_progress[user_id][1]]
+        
         for i, next_event in enumerate(next_events):
-            next_events_dict[f"event{i}_details"] = str(next_event['event_details'])
-            # Subtract 1 from the event_ID to match the first row index of the DataFrame
-            next_events_dict[f"event{i}_ID"] = int(next_event['event_ID'])-1
+            next_events_dict[f"event{i}_details"] = str(next_event['event_details'].values[0])
+            next_events_dict[f"event{i}_ID"] = int(next_event['event_ID'].values[0])
 
         return jsonify({'events': next_events_dict}), 200
 
@@ -97,10 +98,14 @@ def submit_answer():
     if not user_id:
         return jsonify({"error": "User ID not provided"}), 400
 
-    winner_id = request.json.get('winner_id')
+    if user_id not in user_progress:
+        return jsonify({"error": "User ID not found"}), 400
+    
+    winner_id = int(request.json.get('winner_id'))
     if not winner_id:
         return jsonify({"error": "Answer not provided"}), 400
-    loser_id = user_progress[user_id][1][0] if user_progress[user_id][1][0] != winner_id else user_progress[user_id][1][1]
+    print(user_progress[user_id][1], winner_id)
+    loser_id = int(user_progress[user_id][1][0]) if int(user_progress[user_id][1][0]) != winner_id else int(user_progress[user_id][1][1])
 
     # Make sure the winner ID and loser ID are the sane as the assigned event IDs
     if winner_id not in user_progress[user_id][1]:
@@ -111,19 +116,17 @@ def submit_answer():
     # Handle the submitted answer here
     print(f"Received answer from {user_id}: {winner_id}")
 
-    if user_id not in user_progress:
-        return jsonify({"error": "User ID not found"}), 400
-
     # Update the user progress
     user_progress[user_id][0] += 1
     user_progress[user_id][1] = []
 
     # Get the ELO ratings of the winner and loser
+    # Make sure to convert the ELO ratings to integers from pandas float64
     winner_elo = study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating']
     loser_elo = study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating']
 
     # Get updated ELO ratings
-    winner_new_elo, loser_new_elo = update_elos(winner_elo, loser_elo)
+    winner_new_elo, loser_new_elo = update_elos(winner_elo.values[0], loser_elo.values[0])
 
     # Print the changes (event_IDs and ELO ratings new and old)
     print(f"Winner: {winner_id}, Old ELO: {winner_elo.values[0]}, New ELO: {winner_new_elo}")
