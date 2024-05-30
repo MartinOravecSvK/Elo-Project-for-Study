@@ -15,14 +15,13 @@ function App() {
         try {
             const response = await fetch(`http://localhost:5000/next?user_id=${userId}`);
             const data = await response.json();
-            console.log("DATA: ", data)
             if (data.events) {
                 setEvents(data.events);
+                console.log('New events fetched:', data.events)
             } else {
+                console.log(data.error || data.message || 'No events found')
                 setEvents({});
             }
-
-            console.log("EVENTS: ", events)
         } catch (error) {
             console.error('Error fetching events:', error);
         }
@@ -43,7 +42,9 @@ function App() {
             const data = await response.json();
             if (data.events) {
                 setEvents(data.events);
+                console.log('New events fetched:', data.events)
             } else {    
+                console.log(data.error || data.message || 'No events found')
                 setEvents({});
             }
         } catch (error) {
