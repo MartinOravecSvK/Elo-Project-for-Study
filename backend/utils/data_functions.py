@@ -33,7 +33,7 @@ def update_elos(winner_elo, loser_elo):
 
     # Calculate the new ELO ratings
     winner_new_elo = winner_elo + K * (1 - E)
-    loser_new_elo = loser_elo + K * (0 - (1 - E))
+    loser_new_elo = loser_elo + K * (0 - E)
 
     return winner_new_elo, loser_new_elo
 

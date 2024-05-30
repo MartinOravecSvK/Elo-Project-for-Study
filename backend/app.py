@@ -38,12 +38,14 @@ def get_next_events(user_id):
     # Also right now you can get 2 same events
     next_events = [study_data.iloc[random.randint(0, len(study_data) - 1)] for _ in range(2)]
 
+    # Set curret events for the user
     user_progress[user_id][1] = [next_event['event_ID'] for next_event in next_events]
 
     next_events_dict = {}
     for i, next_event in enumerate(next_events):
         next_events_dict[f"event{i}_details"] = str(next_event['event_details'])
-        next_events_dict[f"event{i}_ID"] = int(next_event['event_ID'])
+        # Subtract 1 from the event_ID to match the first row index of the DataFrame
+        next_events_dict[f"event{i}_ID"] = int(next_event['event_ID'])-1
 
     return next_events_dict
 
@@ -70,7 +72,8 @@ def get_next():
 
         for i, next_event in enumerate(next_events):
             next_events_dict[f"event{i}_details"] = str(next_event['event_details'])
-            next_events_dict[f"event{i}_ID"] = int(next_event['event_ID'])
+            # Subtract 1 from the event_ID to match the first row index of the DataFrame
+            next_events_dict[f"event{i}_ID"] = int(next_event['event_ID'])-1
 
         return jsonify({'events': next_events_dict}), 200
 
@@ -101,13 +104,15 @@ def submit_answer():
 
     # Make sure the winner ID and loser ID are the sane as the assigned event IDs
     if winner_id not in user_progress[user_id][1]:
+        print(f"Received answer from {user_id}: {winner_id}, {loser_id}")
+        print(f"Assigned events: {user_progress[user_id][1]}")
         return jsonify({"error": "Invalid answer"}), 400
 
     # Handle the submitted answer here
     print(f"Received answer from {user_id}: {winner_id}")
 
     if user_id not in user_progress:
-        return jsonify({"error": "User ID not found"}), 404
+        return jsonify({"error": "User ID not found"}), 400
 
     # Update the user progress
     user_progress[user_id][0] += 1
