@@ -35,7 +35,7 @@ def update_elos(winner_elo, loser_elo):
     winner_new_elo = winner_elo + K * (1 - E)
     loser_new_elo = loser_elo + K * (0 - E)
 
-    return winner_new_elo, loser_new_elo
+    return int(winner_new_elo), int(loser_new_elo)
 
 if __name__ == '__main__':
     # Load the study data
