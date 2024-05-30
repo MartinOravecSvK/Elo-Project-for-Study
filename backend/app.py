@@ -21,35 +21,35 @@ user_progress = {}
 # - Change route names
 # - Add next events be probabilistic based on ELO ratings
 # - Maybe in the post also add requirement to add the loser ID for sanity check
+# - Add different status codes for different errors
 
 def get_next_events(user_id):
     if user_id not in user_progress:
         user_progress[user_id] = [0, []]
 
-    current_completed = user_progress[user_id]
+    current_completed = user_progress[user_id][0]
 
     # Check if the user has completed all the questions
     if current_completed >= number_of_questions:
         # Handle the completion of the study using empty list as flag
-        return []
+        return {}
 
     # For now get 2 random even_details from study_data
+    # Also right now you can get 2 same events
     next_events = [study_data.iloc[random.randint(0, len(study_data) - 1)] for _ in range(2)]
 
     user_progress[user_id][1] = [next_event['event_ID'] for next_event in next_events]
 
-    next_events_list = []
+    next_events_dict = {}
     for i, next_event in enumerate(next_events):
-        next_events_list.append({
-            f"event{i}_details": next_event['event_details'],
-            f"event{i}_ID": next_event['event_ID']
-        })
+        next_events_dict[f"event{i}_details"] = str(next_event['event_details'])
+        next_events_dict[f"event{i}_ID"] = int(next_event['event_ID'])
 
-    return next_events_list
+    return next_events_dict
 
 # this route gets the next question for the user
 @app.route('/next', methods=['GET'])
-def get_next_question():
+def get_next():
     # The user ID is handled on the frontend
     user_id = request.args.get('user_id')
 
@@ -64,22 +64,27 @@ def get_next_question():
     # Check if the user has already got the next events assigned
     # If so continue with the same events as they have not been submitted yet
     if user_id in user_progress and user_progress[user_id][1] != []:
-        next_events = []
-        for i, event_id in enumerate(user_progress[user_id][1]):
-            event_details = study_data.loc[study_data['event_ID'] == event_id, 'event_details'].values[0]
-            next_events.append({
-                f"event{i}_details": event_details,
-                f"event{i}_ID": event_id
-            })
+        # next_events = []
+        # for i, event_id in enumerate(user_progress[user_id][1]):
+        #     event_details = study_data.loc[study_data['event_ID'] == event_id, 'event_details'].values[0]
+        #     next_events.append({
+        #         f"event{i}_details": event_details,
+        #         f"event{i}_ID": event_id
+        #     })
+        
+        next_events_dict = {}
+        for i, next_event in enumerate(user_progress[user_id][1]):
+            next_events_dict[f"event{i}_details"] = str(next_event['event_details'])
+            next_events_dict[f"event{i}_ID"] = int(next_event['event_ID'])
 
-        return jsonify(next_events), 200
+        return jsonify(next_events_dict), 200
 
     # Get the next questions
     # If the next questions are empty, the user has completed the study
     next_events = get_next_events(user_id)
 
     # If the next questions are empty, the user has completed the study
-    if next_events == []:
+    if not next_events:
         return jsonify({"message": "Study completed"}), 200
     
     return jsonify(next_events), 200
@@ -132,7 +137,7 @@ def submit_answer():
     next_events = get_next_events(user_id)
 
     # If the next questions are empty, the user has completed the study
-    if next_events == []:
+    if not next_events:
         return jsonify({"message": "Study completed"}), 200
 
     return jsonify(next_events), 200
@@ -141,7 +146,7 @@ def submit_answer():
 def home():
     user_id = request.args.get('user_id')
     with app.test_request_context('/next', method='GET', query_string={'user_id': user_id}):
-        return get_next_question()
+        return get_next()
 
 if __name__ == '__main__':
     app.run(debug=True)
