@@ -6,6 +6,19 @@ import FinishedStudyPage from './pages/FinishedStudyPage';
 function App() {
     const [finishedStudy, setFinishedStudy] = useState(false);
 
+    // This useEffect hook handled getting the participant ID from the URL and storing it in the browser's local storage
+    // The participant ID is appended to the URL by Prolific when the study is launched
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const participantId = params.get('participant_id');
+        if (participantId) {
+            localStorage.setItem('participant_id', participantId);
+        } else {
+            // For production, uncomment the line below
+            // console.error('Participant ID not found in URL');
+        }
+    }, []);
+
     // This useEffect hook is used to generate a random 8-character user ID and store it in the browser's local storage
     // This will be changed later to make sure there are no clashing user IDs
     // For that a new backend API will be created to generate a unique user ID
