@@ -4,7 +4,6 @@
     align-items: center;
     height: 30px; 
     border-bottom: 1px solid #e9ecef;
-    /* padding: 0 20px; */
 }
 
 .Logo {
@@ -21,11 +20,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    flex-grow: 1; /* Allow it to grow to take available space */
-    margin: 0 20px; /* Add some margin to separate from logo and study name */
+    flex-grow: 1;
 }
 
 .ProgressBar {
-    width: 100%;
+    width: 80%;
     height: 20px;
 }
