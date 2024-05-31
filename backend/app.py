@@ -159,7 +159,7 @@ def submit_answer():
     study_data.loc[study_data['event_ID'] == winner_id, classification] += 1
 
     # For testing purposes print all the categories and classifications
-    print(study_data.loc[study_data['event_ID'] == winner_id, ['Health', 'Financial', 'Relationship', 'Bereavement', 'Work', 'Crime', 'Daily', 'Major']])
+    # print(study_data.loc[study_data['event_ID'] == winner_id, ['Health', 'Financial', 'Relationship', 'Bereavement', 'Work', 'Crime', 'Daily', 'Major']])
 
     # Get the next set of events
     next_events = get_next_events(user_id)

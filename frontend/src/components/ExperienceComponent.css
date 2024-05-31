@@ -1,3 +1,7 @@
+.ExperienceWrapper {
+    text-align: center;
+}
+
 .events {
     display: flex;
     justify-content: center;
@@ -9,14 +13,27 @@
     border: 1px solid #ccc;
     padding: 20px;
     border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 150px; /* Adjust the height as needed */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .event h2 {
-    margin-bottom: 10px;
+    margin: 0;
 }
 
-.event button {
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
+.event.selected {
+    border-color: #007bff;
+    box-shadow: 0 0 20px rgba(0, 123, 255, 0.5);
+    background: linear-gradient(to right, #e0f7fa, #e0f7fa);
+}
+
+.event:hover {
+    border-color: #007bff;
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.3);
 }
