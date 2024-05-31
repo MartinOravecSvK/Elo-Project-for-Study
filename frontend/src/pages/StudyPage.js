@@ -5,9 +5,9 @@ import ExperienceComponent from '../components/ExperienceComponent';
 import CategoryComponent from '../components/CategoryComponent';
 import ClassificationComponent from '../components/ClassificationComponent';
 
-function StudyPage({ setFinishedStudy }) {
+function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone }) {
     const [events, setEvents] = useState({});
-    
+
     // event ID of the event with more negative sentiment
     const [moreNegative, setMoreNegative] = useState(null);
     // Right now just using the more negative event ID and deriving the other on the backend
@@ -40,6 +40,8 @@ function StudyPage({ setFinishedStudy }) {
                 setEvents(data.events);
                 // For production, remove console.log
                 console.log('New events fetched:', data.events)
+                setEventsDone(data.progress.current_completed);
+                setEventsNum(data.progress.number_of_questions);
             } else {
                 // For production, remove console.log 
                 console.log(data.error || data.message || 'No events found')
@@ -47,6 +49,8 @@ function StudyPage({ setFinishedStudy }) {
                 // Check to see if the study is completed
                 if (data.message === 'Study completed') {
                     setFinishedStudy(true);
+                    setEventsDone(data.progress.current_completed);
+                    setEventsNum(data.progress.number_of_questions);
                 }
             }
         } catch (error) {
@@ -96,11 +100,15 @@ function StudyPage({ setFinishedStudy }) {
             if (data.events) {
                 setEvents(data.events);
                 console.log('New events fetched:', data.events)
+                setEventsDone(data.progress.current_completed);
+                setEventsNum(data.progress.number_of_questions);
             } else {    
                 console.log(data.error || data.message || 'No events found')
                 setEvents({});
                 if (data.message === 'Study completed') {
                     setFinishedStudy(true);
+                    setEventsDone(data.progress.current_completed);
+                    setEventsNum(data.progress.number_of_questions);
                 }
             }
             // Reset the states
