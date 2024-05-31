@@ -1,19 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './CategoryComponent.css';
 
 function CategoryComponent({ setCategory }) {
+    const [selectedCategory, setSelectedCategory] = useState(null);
+
+    const handleCategoryClick = (category) => {
+        setSelectedCategory(category);
+        setCategory(category);
+    };
+
     return (
         <div className='CategoryWrapper'>
             <h1>
                 Which category best describes this type of event/experience:
             </h1>
             <div className='CategoryButtons'>
-                <button onClick={() => setCategory('Health')}>Health</button>
-                <button onClick={() => setCategory('Financial')}>Financial</button>
-                <button onClick={() => setCategory('Relationship')}>Relationship</button>
-                <button onClick={() => setCategory('Bereavement')}>Bereavement</button>
-                <button onClick={() => setCategory('Work')}>Work</button>
-                <button onClick={() => setCategory('Crime')}>Crime</button>
+                {['Health', 'Financial', 'Relationship', 'Bereavement', 'Work', 'Crime'].map((category) => (
+                    <div
+                        key={category}
+                        className={`category-button ${selectedCategory === category ? 'selected' : ''}`}
+                        onClick={() => handleCategoryClick(category)}
+                    >
+                        {category}
+                    </div>
+                ))}
             </div>
         </div>
     );
