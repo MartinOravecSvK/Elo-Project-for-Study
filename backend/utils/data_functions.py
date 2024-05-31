@@ -6,7 +6,7 @@ from os import path
 DROP_COLUMNS = ['fileName', 'study_number', 'participant_ID', 'event_valence', 'event_when', 'event_known']
 
 # Additional columns for the study data (all just counters)
-categories = ['Health', 'Financial', 'Relationships', 'Bereavement', 'Work', 'Crime']
+categories = ['Health', 'Financial', 'Relationship', 'Bereavement', 'Work', 'Crime']
 classification = ['Daily', 'Major']
 
 # Returns the study data as a pandas DataFrame
@@ -30,7 +30,7 @@ def get_study_data():
     # Finally add additional columns for the study data
     study_data['Health'] = 0
     study_data['Financial'] = 0
-    study_data['Relationships'] = 0
+    study_data['Relationship'] = 0
     study_data['Bereavement'] = 0
     study_data['Work'] = 0
     study_data['Crime'] = 0
