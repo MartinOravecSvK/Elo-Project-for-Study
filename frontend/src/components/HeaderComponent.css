@@ -1,0 +1,29 @@
+.HeaderWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 30px; 
+    border-bottom: 1px solid #e9ecef;
+}
+
+.Logo {
+    height: 100%;
+    width: auto;
+}
+
+.StudyName {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.ProgressContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.ProgressBar {
+    width: 80%;
+    height: 20px;
+}
