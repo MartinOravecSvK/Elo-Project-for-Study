@@ -1,0 +1,19 @@
+.HeaderWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.Logo {
+    height: 100%;
+    padding: 0 10px;
+    right: 100%;
+}
+
+.StudyName {
+    font-size: 28px;
+    font-weight: bold;
+    left: 100%;
+}

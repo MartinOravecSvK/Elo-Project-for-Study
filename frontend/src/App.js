@@ -3,6 +3,8 @@ import './App.css';
 import StudyPage from './pages/StudyPage';
 import FinishedStudyPage from './pages/FinishedStudyPage';
 
+import HeaderComponent from './components/HeaderComponent';
+
 function App() {
     const [finishedStudy, setFinishedStudy] = useState(false);
 
@@ -61,6 +63,7 @@ function App() {
 
     return (
         <div className="App">
+            <HeaderComponent />
             {finishedStudy ? <FinishedStudyPage /> : <StudyPage setFinishedStudy={setFinishedStudy} />}
         </div>
     );
