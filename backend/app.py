@@ -33,7 +33,7 @@ def get_next_events_based_on_elo():
 
     return next_events
 
-def get_next_events(user_id):    
+def get_next_events(user_id):
     if user_id not in user_progress:
         user_progress[user_id] = [0, []]
 

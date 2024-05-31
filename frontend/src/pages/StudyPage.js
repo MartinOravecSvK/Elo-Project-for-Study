@@ -3,6 +3,17 @@ import './StudyPage.css';
 
 function StudyPage({ setFinishedStudy }) {
     const [events, setEvents] = useState({});
+    // event ID of the event with more negative sentiment
+    const [moreNegative, setMoreNegative] = useState(null);
+    // Right now just using the more negative event ID and deriving the other on the backend
+    // const [morePositive, setMorePositive] = useState(null);
+    
+    // Category of the event with more negative sentiment
+    // Categories include: [Health, Financial, Relationship, Bereavement, Work, Crime]
+    const [category, setCategory] = useState(null);
+
+    // Classification, Daily or Major
+    const [classification, setClassification] = useState(null);
 
     // Replace 'some-unique-user-id' with a unique identifier for the user (generate some and store it in browser's local storage)
     const userId = localStorage.getItem('user_id') || null;
@@ -39,6 +50,30 @@ function StudyPage({ setFinishedStudy }) {
     };
 
     const submitAnswer = async (winnerId) => {
+        // First check that all the required states are set
+        // If not show to the user that they need to select one from each option
+
+        if (!userId) {
+            console.error('User ID not found in local storage');
+            return;
+        }
+
+        if (!moreNegative) {
+            // Change this to show a message to the user
+            console.error('More negative event ID not found');
+            return;
+        }
+        if (!category) {
+            // Change this to show a message to the user
+            console.error('Category not found');
+            return;
+        }
+        if (!classification) {
+            // Change this to show a message to the user
+            console.error('Classification not found');
+            return;
+        }
+
         try {
             const response = await fetch('http://localhost:5000/submit', {
                 method: 'POST',
@@ -61,6 +96,10 @@ function StudyPage({ setFinishedStudy }) {
                     setFinishedStudy(true);
                 }
             }
+            // Reset the states
+            setMoreNegative(null);
+            setCategory(null);
+            setClassification(null);
         } catch (error) {
             console.error('Error submitting answer:', error);
         }
