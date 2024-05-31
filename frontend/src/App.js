@@ -25,15 +25,39 @@ function App() {
     useEffect(() => {
         // Check if user ID is already set in local storage
         if (!localStorage.getItem('user_id')) {
-            // Generate a random 8-character user ID
-            const userId = 'user-' + Math.random().toString(36).substr(2, 8);
-            localStorage.setItem('user_id', userId);
+            generateUserId();
+        } else {
+            console.log('User ID:', localStorage.getItem('user_id'));
         }
     }, []);
 
     useEffect(() => {
         console.log('User ID:', localStorage.getItem('user_id'), 'Study finished:', finishedStudy);
     }, [finishedStudy]);
+
+    generateUserId = async () => {
+        // Generate a random 8-character user ID
+        let uuid = Math.random().toString(36).substr(2, 8);
+        try {
+            const response = await fetch('http://localhost:5000/check_generated_uuid', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: userId,
+                }),
+            });
+            const data = await response.json();
+            if (data.message === 'User ID already exists') {
+                generateUserId();
+            } else {
+                localStorage.setItem('user_id', uuid);
+            }
+        } catch (error) {
+            console.error();
+        }
+    }
 
     return (
         <div className="App">
