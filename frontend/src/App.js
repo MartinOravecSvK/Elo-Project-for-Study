@@ -35,24 +35,24 @@ function App() {
         console.log('User ID:', localStorage.getItem('user_id'), 'Study finished:', finishedStudy);
     }, [finishedStudy]);
 
-    generateUserId = async () => {
+    const generateUserId = async () => {
         // Generate a random 8-character user ID
-        let uuid = Math.random().toString(36).substr(2, 8);
+        const user_id = Math.random().toString(36).substr(2, 8);
         try {
-            const response = await fetch('http://localhost:5000/check_generated_uuid', {
+            const response = await fetch('http://localhost:5000/check_user_id', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    user_id: userId,
+                    user_id: user_id,
                 }),
             });
             const data = await response.json();
             if (data.message === 'User ID already exists') {
                 generateUserId();
             } else {
-                localStorage.setItem('user_id', uuid);
+                localStorage.setItem('user_id', user_id);
             }
         } catch (error) {
             console.error();
