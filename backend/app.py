@@ -15,6 +15,7 @@ number_of_questions = 2
 study_data = get_study_data()
 
 # Dictionary to keep track of users and their progress and current event_IDs for both events
+# It is in the format {user_id: [(int) current_completed, [(int)event_ID1, (int)event_ID2]]}
 user_progress = {}
 
 # TODO:
@@ -23,6 +24,7 @@ user_progress = {}
 # - Maybe in the post also add requirement to add the loser ID for sanity check
 # - Test limits
 
+# Put this into data_functions.py
 # Returns list of 2 DataFrame rows with event details
 def get_next_events_based_on_elo():
     next_events = [study_data.loc[study_data['event_ID'] == random.randint(1, len(study_data))] for _ in range(2)]
@@ -104,7 +106,7 @@ def submit_answer():
     winner_id = int(request.json.get('winner_id'))
     if not winner_id:
         return jsonify({"error": "Answer not provided"}), 400
-    print(user_progress[user_id][1], winner_id)
+    
     loser_id = int(user_progress[user_id][1][0]) if int(user_progress[user_id][1][0]) != winner_id else int(user_progress[user_id][1][1])
 
     # Make sure the winner ID and loser ID are the sane as the assigned event IDs
@@ -113,15 +115,11 @@ def submit_answer():
         print(f"Assigned events: {user_progress[user_id][1]}")
         return jsonify({"error": "Invalid answer"}), 400
 
-    # Handle the submitted answer here
-    print(f"Received answer from {user_id}: {winner_id}")
-
     # Update the user progress
     user_progress[user_id][0] += 1
     user_progress[user_id][1] = []
 
     # Get the ELO ratings of the winner and loser
-    # Make sure to convert the ELO ratings to integers from pandas float64
     winner_elo = study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating']
     loser_elo = study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating']
 
@@ -129,6 +127,7 @@ def submit_answer():
     winner_new_elo, loser_new_elo = update_elos(winner_elo.values[0], loser_elo.values[0])
 
     # Print the changes (event_IDs and ELO ratings new and old)
+    # Only for testing purposes  
     print(f"Winner: {winner_id}, Old ELO: {winner_elo.values[0]}, New ELO: {winner_new_elo}")
     print(f"Loser: {loser_id}, Old ELO: {loser_elo.values[0]}, New ELO: {loser_new_elo}")
 
