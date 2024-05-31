@@ -33,13 +33,10 @@ def get_next_events_based_on_elo():
 
     return next_events
 
-def get_next_events(user_id):
+def get_next_events(user_id):    
     if user_id not in user_progress:
         user_progress[user_id] = [0, []]
 
-    # Check if the user has completed the study
-    if user_id in user_progress and user_progress[user_id][0] >= number_of_questions:
-        return jsonify({"message": "Study completed"}), 200
 
     # For now get 2 random even_details from study_data
     # Also right now you can get 2 same events
@@ -103,6 +100,10 @@ def submit_answer():
 
     if user_id not in user_progress:
         return jsonify({"error": "User ID not found"}), 400
+    
+    # Check if the user has completed the study
+    if user_id in user_progress and user_progress[user_id][0] >= number_of_questions:
+        return jsonify({"message": "Study completed"}), 200
     
     winner_id = int(request.json.get('winner_id'))
     if not winner_id:

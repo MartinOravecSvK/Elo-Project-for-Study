@@ -1,7 +1,7 @@
 import React from 'react';
 
 function FinishedStudyPage() {
-    // Tried to integrate the original code for the finished study page into react
+    // Tried to integrate the original code for the finished study page into react as best as possible
     return (
         <div className="jspsych-display-element">
             <head>
