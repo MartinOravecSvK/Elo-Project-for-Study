@@ -150,6 +150,17 @@ def submit_answer():
 
     return jsonify({'events': next_events}), 200
 
+# Used to check if the generated UUID is valid
+# As with everything this needs to be changed if concurency is going to be used
+@app.route('/checkUUID', methods=['POST'])
+def check_generated_uuid():
+    user_id = request.json.get('user_id')
+
+    if user_id in user_progress:
+        return jsonify({"message": "User ID already exists"}), 200
+
+    return jsonify({"message": "User ID is valid"}), 200
+
 @app.route('/', methods=['GET'])
 def home():
     user_id = request.args.get('user_id')
