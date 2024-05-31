@@ -7,6 +7,7 @@ import ClassificationComponent from '../components/ClassificationComponent';
 
 function StudyPage({ setFinishedStudy }) {
     const [events, setEvents] = useState({});
+    
     // event ID of the event with more negative sentiment
     const [moreNegative, setMoreNegative] = useState(null);
     // Right now just using the more negative event ID and deriving the other on the backend
@@ -113,10 +114,20 @@ function StudyPage({ setFinishedStudy }) {
 
     return (
         <div className='StudyPage'>
-            {events != {} ? ExperienceComponent({ setMoreNegative, events }) : <p>No more events to show. Study completed!</p>}
-            {moreNegative != null ? CategoryComponent({ setCategory }) : null}
-            {category != null ? ClassificationComponent({ setClassification }) : null}
-            {classification != null ? <button onClick={submitAnswer} className='NextButton'>Submit</button> : null}
+            {events && Object.keys(events).length > 0 ? (
+                <ExperienceComponent setMoreNegative={setMoreNegative} events={events} />
+            ) : (
+                <p>No more events to show. Study completed!</p>
+            )}
+            {moreNegative != null && (
+                <CategoryComponent setCategory={setCategory} />
+            )}
+            {category != null && (
+                <ClassificationComponent setClassification={setClassification} />
+            )}
+            {classification != null && (
+                <button onClick={submitAnswer} className='NextButton'>Submit</button>
+            )}
         </div>
     );
 }
