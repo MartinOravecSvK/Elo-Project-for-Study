@@ -27,7 +27,10 @@ user_progress = {}
 # Put this into data_functions.py
 # Returns list of 2 DataFrame rows with event details
 def get_next_events_based_on_elo():
-    next_events = [study_data.loc[study_data['event_ID'] == random.randint(1, len(study_data))] for _ in range(2)]
+    next_events = [study_data.loc[study_data['event_ID'] == random.randint(1, len(study_data))] for _ in range(1)]
+    # For testing purposes include the longest event_details
+    next_events.append(study_data.loc[study_data['event_ID'] == 342])
+
     return next_events
 
 def get_next_events(user_id):
