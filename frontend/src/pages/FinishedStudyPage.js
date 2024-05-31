@@ -5,6 +5,8 @@ import './FinishedStudyPage.css';  // Ensure your CSS is being imported here
 // TODO:
 // - Fix broken Logo image path (there is none that is valid)
 // - Double check it works as intended
+// - Use <img> with script fallbacks to png version (for older IE and android < 3). One clean and simple way to do that: <img src="your.svg" onerror="this.src='your.png'">
+
 
 function FinishedStudyPage() {
 
@@ -28,15 +30,14 @@ function FinishedStudyPage() {
             <Helmet>
                 <title>End Study</title>
                 {/* <meta http-equiv="refresh" content="5; url=https://app.prolific.com/submissions/complete?cc=COBF1PK2" /> */}
-                <link href="../../jspsych-6.2.0/css/jspsych.css" rel="stylesheet" type="text/css" />
+
             </Helmet>
             <div className="jspsych-content-wrapper">
                 <div className="jspsych-content">
                     <div style={{ width: '100%' }}>
                         <img
                             style={{ display: 'block', margin: '0 auto', width: '200px', height: 'auto' }}
-                            src="../UoBlogocolour.png"
-                            alt="Logo"
+                            src="/UoBLogo.svg"
                         />
                     </div>
                     <h2><b>
