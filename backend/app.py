@@ -27,6 +27,7 @@ user_progress = {}
 # - Maybe in the post also add requirement to add the loser ID for sanity check
 # - Test limits
 # - Change winner to loser (The users are asked to select the more negative event/experience)
+# - Make sure there are no clashes with the selected events and also make that based on ELO rating
 
 # Put this into data_functions.py
 # Returns list of 2 DataFrame rows with event details
