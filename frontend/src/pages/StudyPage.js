@@ -133,7 +133,7 @@ function StudyPage({ setFinishedStudy }) {
             {events != {} ? ExperienceComponent({ setMoreNegative }) : <p>No more events to show. Study completed!</p>}
             {moreNegative != null ? CategoryComponent({ setCategory }) : null}
             {category != null ? ClassificationComponent({ setClassification }) : null}
-            {classification != null ? <button onClick={submitAnswer}>Submit</button> : null}
+            {classification != null ? <button onClick={submitAnswer} className='NextButton'>Submit</button> : null}
         </div>
     );
 }

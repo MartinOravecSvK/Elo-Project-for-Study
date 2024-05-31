@@ -24,8 +24,18 @@ def get_study_data():
     # Adding 950 centers the ELO rating to 1000 (might not be the best approach, but it's a simple one for this example) 
     study_data['elo_rating'] = 950 + study_data['slider_end']
 
-    # Finally drop the slider_end column
+    # Drop the slider_end column
     study_data.drop(columns=['slider_end'], inplace=True)
+
+    # Finally add additional columns for the study data
+    study_data['Health'] = 0
+    study_data['Financial'] = 0
+    study_data['Relationships'] = 0
+    study_data['Bereavement'] = 0
+    study_data['Work'] = 0
+    study_data['Crime'] = 0
+    study_data['Daily'] = 0
+    study_data['Major'] = 0
     
     return study_data
 
