@@ -23,6 +23,7 @@ user_progress = {}
 # - Add next events be probabilistic based on ELO ratings
 # - Maybe in the post also add requirement to add the loser ID for sanity check
 # - Test limits
+# - Change winner to loser (The users are asked to select the more negative event/experience)
 
 # Put this into data_functions.py
 # Returns list of 2 DataFrame rows with event details
@@ -109,6 +110,7 @@ def submit_answer():
     if user_id in user_progress and user_progress[user_id][0] >= number_of_questions:
         return jsonify({"message": "Study completed"}), 200
     
+    # winner is actuallu a loser since the users are selecting the more negative event/experiencce
     winner_id = int(request.json.get('winner_id'))
     if not winner_id:
         return jsonify({"error": "Answer not provided"}), 400
@@ -148,6 +150,13 @@ def submit_answer():
     # Update the ELO ratings in the study data
     study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'] = winner_new_elo
     study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating'] = loser_new_elo
+
+    # Update the category and classification counters
+    study_data.loc[study_data['event_ID'] == winner_id, category] += 1
+    study_data.loc[study_data['event_ID'] == winner_id, classification] += 1
+
+    # For testing purposes print all the categories and classifications
+    print(study_data.loc[study_data['event_ID'] == winner_id, ['Health', 'Financial', 'Relationships', 'Bereavement', 'Work', 'Crime', 'Daily', 'Major']])
 
     # Get the next set of events
     next_events = get_next_events(user_id)
