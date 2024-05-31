@@ -44,3 +44,11 @@ if __name__ == '__main__':
     # Print the study data columns
     print(study_data.columns)
     print(study_data.head())
+
+    # Print the longest event_details
+    print('Longest event_details: ', study_data['event_details'].apply(lambda x: len(str(x))).max())
+    # Also print the event_ID of the longest event_details
+    print('Longest event_details ID: ', study_data.loc[study_data['event_details'].apply(lambda x: len(str(x))) == study_data['event_details'].apply(lambda x: len(str(x))).max(), 'event_ID'].values[0])
+
+    # Print the average event_details
+    print('Mean event_details: ', study_data['event_details'].apply(lambda x: len(str(x))).mean())

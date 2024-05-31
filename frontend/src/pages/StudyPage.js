@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './StudyPage.css';
 
-function StudyPage() {
+function StudyPage(setFinishedStudy) {
     const [events, setEvents] = useState({});
 
     // Replace 'some-unique-user-id' with a unique identifier for the user (generate some and store it in browser's local storage)
@@ -22,10 +22,16 @@ function StudyPage() {
             const data = await response.json();
             if (data.events) {
                 setEvents(data.events);
+                // For production, remove console.log
                 console.log('New events fetched:', data.events)
             } else {
+                // For production, remove console.log 
                 console.log(data.error || data.message || 'No events found')
                 setEvents({});
+                // Check to see if the study is completed
+                if (data.message === 'Study completed') {
+                    setFinishedStudy(true);
+                }
             }
         } catch (error) {
             console.error('Error fetching events:', error);
