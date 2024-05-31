@@ -7,6 +7,8 @@ import HeaderComponent from './components/HeaderComponent';
 
 function App() {
     const [finishedStudy, setFinishedStudy] = useState(false);
+    const [eventsNum, setEventsNum] = useState(0);
+    const [eventsDone, setEventsDone] = useState(0);
 
     // This useEffect hook handled getting the participant ID from the URL and storing it in the browser's local storage
     // The participant ID is appended to the URL by Prolific when the study is launched
@@ -63,8 +65,8 @@ function App() {
 
     return (
         <div className="App">
-            <HeaderComponent />
-            {finishedStudy ? <FinishedStudyPage /> : <StudyPage setFinishedStudy={setFinishedStudy} />}
+            <HeaderComponent eventsNum={eventsNum} eventsDone={eventsDone} />
+            {finishedStudy ? <FinishedStudyPage /> : <StudyPage setFinishedStudy={setFinishedStudy} setEventsNum={setEventsNum} setEventsDone={setEventsDone} />}
         </div>
     );
 }

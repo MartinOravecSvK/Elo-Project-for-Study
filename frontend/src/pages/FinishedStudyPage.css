@@ -1,6 +1,7 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700);
 
 .jspsych-display-element {
+  margin-top: 40px;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
