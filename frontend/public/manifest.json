@@ -1,0 +1,9 @@
+{
+  "short_name": "Elo Rating App",
+  "name": "Elo Rating App for Study",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
