@@ -1,14 +1,18 @@
 import React from 'react';
+import { Helmet } from 'react-helmet';
+import './FinishedStudyPage.css';  // Ensure your CSS is being imported here
+
 
 function FinishedStudyPage() {
     // Tried to integrate the original code for the finished study page into react as best as possible
     return (
         <div className="jspsych-display-element">
-            <head>
+            {/* Using Helmet instead of Head as you can't normally directly change head of the html page in react thus we use a  library react-helmet*/}
+            <Helmet>
                 <title>End Study</title>
-                {/* <meta http-equiv="refresh" content="5; url=https://app.prolific.com/submissions/complete?cc=COBF1PK2" />
-                <link href="../../jspsych-6.2.0/css/jspsych.css" rel="stylesheet" type="text/css" /> */}
-            </head>
+                <meta http-equiv="refresh" content="5; url=https://app.prolific.com/submissions/complete?cc=COBF1PK2" />
+                <link href="../../jspsych-6.2.0/css/jspsych.css" rel="stylesheet" type="text/css" />
+            </Helmet>
             <div className="jspsych-content-wrapper">
                 <div className="jspsych-content">
                     <div style={{ width: '100%' }}>
