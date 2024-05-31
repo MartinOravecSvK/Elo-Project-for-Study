@@ -37,11 +37,9 @@ def get_next_events(user_id):
     if user_id not in user_progress:
         user_progress[user_id] = [0, []]
 
-    current_completed = user_progress[user_id][0]
-
-    # Check if the user has completed all the questions
-    if current_completed >= number_of_questions:
-        return {}
+    # Check if the user has completed the study
+    if user_id in user_progress and user_progress[user_id][0] >= number_of_questions:
+        return jsonify({"message": "Study completed"}), 200
 
     # For now get 2 random even_details from study_data
     # Also right now you can get 2 same events
