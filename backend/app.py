@@ -94,6 +94,7 @@ def get_next():
     if not next_events:
         return jsonify({"message": "Study completed"}), 200
     
+    # Also include the number of questions the user has answered
     return jsonify({'events': next_events}), 200
 
 
@@ -169,6 +170,7 @@ def submit_answer():
     if not next_events:
         return jsonify({"message": "Study completed"}), 200
 
+    # Also include the number of questions the user has answered
     return jsonify({'events': next_events}), 200
 
 # Used to check if the generated UUID is valid
@@ -180,6 +182,7 @@ def check_generated_user_id():
     if user_id in user_progress:
         return jsonify({"message": "User ID already exists"}), 200
 
+    # Also include the number of questions the user has to answer
     return jsonify({"message": "User ID is valid"}), 200
 
 @app.route('/', methods=['GET'])

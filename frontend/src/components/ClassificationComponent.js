@@ -1,15 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './ClassificationComponent.css';
 
 function ClassificationComponent({ setClassification }) {
+    const [selectedClassification, setSelectedClassification] = useState(null);
+
+    const handleClassificationClick = (classification) => {
+        setSelectedClassification(classification);
+        setClassification(classification);
+    };
+
     return (
         <div className='ClassificationWrapper'>
             <h1>
                 Would you classify this as a "Daily" or "Major" life event?
             </h1>
             <div className='ClassificationButtons'>
-                <button onClick={() => setClassification('Daily')}>Daily</button>
-                <button onClick={() => setClassification('Major')}>Major</button>
+                {['Daily', 'Major'].map((classification) => (
+                    <div
+                        key={classification}
+                        className={`classification-button ${selectedClassification === classification ? 'selected' : ''}`}
+                        onClick={() => handleClassificationClick(classification)}
+                    >
+                        {classification}
+                    </div>
+                ))}
             </div>
         </div>
     );
