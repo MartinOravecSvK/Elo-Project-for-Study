@@ -130,7 +130,7 @@ function StudyPage({ setFinishedStudy }) {
         //     )}
         // </div>
         <div className='StudyPage'>
-            {events != {} ? ExperienceComponent({ setMoreNegative }) : <p>No more events to show. Study completed!</p>}
+            {events != {} ? ExperienceComponent({ setMoreNegative, events }) : <p>No more events to show. Study completed!</p>}
             {moreNegative != null ? CategoryComponent({ setCategory }) : null}
             {category != null ? ClassificationComponent({ setClassification }) : null}
             {classification != null ? <button onClick={submitAnswer} className='NextButton'>Submit</button> : null}

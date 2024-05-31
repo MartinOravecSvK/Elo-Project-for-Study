@@ -1,7 +1,7 @@
 import React from 'react';
 import './ExperienceComponent.css';
 
-function ExperienceComponent({ setMoreNegative }) {
+function ExperienceComponent({ setMoreNegative, events }) {
     return (
         <div className='ExperienceWrapper'>
             <h1>

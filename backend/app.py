@@ -14,6 +14,9 @@ number_of_questions = 2
 # Load the study data as pandas DataFrame
 study_data = get_study_data()
 
+# For testing purposes print the columns
+print(study_data.columns)
+
 # Dictionary to keep track of users and their progress and current event_IDs for both events
 # It is in the format {user_id: [(int) current_completed, [(int)event_ID1, (int)event_ID2]]}
 user_progress = {}
@@ -156,7 +159,7 @@ def submit_answer():
     study_data.loc[study_data['event_ID'] == winner_id, classification] += 1
 
     # For testing purposes print all the categories and classifications
-    print(study_data.loc[study_data['event_ID'] == winner_id, ['Health', 'Financial', 'Relationships', 'Bereavement', 'Work', 'Crime', 'Daily', 'Major']])
+    print(study_data.loc[study_data['event_ID'] == winner_id, ['Health', 'Financial', 'Relationship', 'Bereavement', 'Work', 'Crime', 'Daily', 'Major']])
 
     # Get the next set of events
     next_events = get_next_events(user_id)
