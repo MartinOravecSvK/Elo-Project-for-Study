@@ -115,6 +115,14 @@ def submit_answer():
     
     loser_id = int(user_progress[user_id][1][0]) if int(user_progress[user_id][1][0]) != winner_id else int(user_progress[user_id][1][1])
 
+    category = request.json.get('category')
+    if not category:
+        return jsonify({"error": "Category not provided"}), 400
+    
+    classification = request.json.get('classification')
+    if not classification:
+        return jsonify({"error": "Classification not provided"}), 400
+
     # Make sure the winner ID and loser ID are the sane as the assigned event IDs
     if winner_id not in user_progress[user_id][1]:
         print(f"Received answer from {user_id}: {winner_id}, {loser_id}")
