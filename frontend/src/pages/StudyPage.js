@@ -126,7 +126,7 @@ function StudyPage({ setFinishedStudy }) {
                 <ClassificationComponent setClassification={setClassification} />
             )}
             {classification != null && (
-                <button onClick={submitAnswer} className='NextButton'>Submit</button>
+                <button onClick={submitAnswer} className='NextButton'>Next</button>
             )}
         </div>
     );
