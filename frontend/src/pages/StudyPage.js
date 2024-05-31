@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import './StudyPage.css';
 
+import ExperienceComponent from '../components/ExperienceComponent';
+import CategoryComponent from '../components/CategoryComponent';
+import ClassificationComponent from '../components/ClassificationComponent';
+
 function StudyPage({ setFinishedStudy }) {
     const [events, setEvents] = useState({});
     // event ID of the event with more negative sentiment
@@ -49,7 +53,7 @@ function StudyPage({ setFinishedStudy }) {
         }
     };
 
-    const submitAnswer = async (winnerId) => {
+    const submitAnswer = async () => {
         // First check that all the required states are set
         // If not show to the user that they need to select one from each option
 
@@ -82,7 +86,9 @@ function StudyPage({ setFinishedStudy }) {
                 },
                 body: JSON.stringify({
                     user_id: userId,
-                    winner_id: winnerId,
+                    winner_id: moreNegative,
+                    category: category,
+                    classification: classification,
                 }),
             });
             const data = await response.json();
@@ -106,22 +112,28 @@ function StudyPage({ setFinishedStudy }) {
     };
 
     return (
-        <div className="StudyPage">
-            <h1>Choose the Event</h1>
-            {events != {} ? (
-                <div className="events">
-                    <div className="event">
-                        <h2>{events.event0_details}</h2>
-                        <button onClick={() => submitAnswer(events.event0_ID)}>Choose This Event</button>
-                    </div>
-                    <div className="event">
-                        <h2>{events.event1_details}</h2>
-                        <button onClick={() => submitAnswer(events.event1_ID)}>Choose This Event</button>
-                    </div>
-                </div>
-            ) : (
-                <p>No more events to show. Study completed!</p>
-            )}
+        // <div className="StudyPage">
+        //     <h1>Choose the Event</h1>
+        //     {events != {} ? (
+        //         <div className="events">
+        //             <div className="event">
+        //                 <h2>{events.event0_details}</h2>
+        //                 <button onClick={() => submitAnswer(events.event0_ID)}>Choose This Event</button>
+        //             </div>
+        //             <div className="event">
+        //                 <h2>{events.event1_details}</h2>
+        //                 <button onClick={() => submitAnswer(events.event1_ID)}>Choose This Event</button>
+        //             </div>
+        //         </div>
+        //     ) : (
+        //         <p>No more events to show. Study completed!</p>
+        //     )}
+        // </div>
+        <div className='StudyPage'>
+            {events != {} ? ExperienceComponent({ setMoreNegative }) : <p>No more events to show. Study completed!</p>}
+            {moreNegative != null ? CategoryComponent({ setCategory }) : null}
+            {category != null ? ClassificationComponent({ setClassification }) : null}
+            {classification != null ? <button onClick={submitAnswer}>Submit</button> : null}
         </div>
     );
 }
