@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './StudyPage.css';
 
-function StudyPage(setFinishedStudy) {
+function StudyPage({ setFinishedStudy }) {
     const [events, setEvents] = useState({});
 
     // Replace 'some-unique-user-id' with a unique identifier for the user (generate some and store it in browser's local storage)
@@ -57,6 +57,9 @@ function StudyPage(setFinishedStudy) {
             } else {    
                 console.log(data.error || data.message || 'No events found')
                 setEvents({});
+                if (data.message === 'Study completed') {
+                    setFinishedStudy(true);
+                }
             }
         } catch (error) {
             console.error('Error submitting answer:', error);

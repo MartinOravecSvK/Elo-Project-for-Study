@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import StudyPage from './pages/StudyPage';
+import FinishedStudyPage from './pages/FinishedStudyPage';
 
 function App() {
-    const [finshedStudy, setFinishedStudy] = useState(false);
+    const [finishedStudy, setFinishedStudy] = useState(false);
 
     // This useEffect hook is used to generate a random 8-character user ID and store it in the browser's local storage
     // This will be changed later to make sure there are no clashing user IDs
@@ -18,14 +19,12 @@ function App() {
     }, []);
 
     useEffect(() => {
-        if (finshedStudy) {
-            console.log('Study completed');
-        }
-    }, [finshedStudy]);
+        console.log('User ID:', localStorage.getItem('user_id'), 'Study finished:', finishedStudy);
+    }, [finishedStudy]);
 
     return (
         <div className="App">
-            <StudyPage setFinishedStudy={setFinishedStudy} />
+            {finishedStudy ? <FinishedStudyPage /> : <StudyPage setFinishedStudy={setFinishedStudy} />}
         </div>
     );
 }
