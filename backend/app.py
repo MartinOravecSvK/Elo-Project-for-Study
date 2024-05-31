@@ -152,8 +152,8 @@ def submit_answer():
 
 # Used to check if the generated UUID is valid
 # As with everything this needs to be changed if concurency is going to be used
-@app.route('/checkUUID', methods=['POST'])
-def check_generated_uuid():
+@app.route('/check_user_id', methods=['POST'])
+def check_generated_user_id():
     user_id = request.json.get('user_id')
 
     if user_id in user_progress:
