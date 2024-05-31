@@ -5,6 +5,10 @@ from os import path
 # 'event_valence' might be useful for better ELO rating calculation
 DROP_COLUMNS = ['fileName', 'study_number', 'participant_ID', 'event_valence', 'event_when', 'event_known']
 
+# Additional columns for the study data (all just counters)
+categories = ['Health', 'Financial', 'Relationships', 'Bereavement', 'Work', 'Crime']
+classification = ['Daily', 'Major']
+
 # Returns the study data as a pandas DataFrame
 # Columns: ['event_details', 'event_ID', 'elo_rating']
 def get_study_data():
