@@ -49,7 +49,11 @@ def get_study_data():
     return study_data
 
 # Just a simple function to update the ELO ratings
-def update_elos(winner_elo, loser_elo):
+def update_elos(winner_id, loser_id, study_data):
+    # Get the ELO ratings of the winner and loser
+    winner_elo = study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating']
+    loser_elo = study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating']
+
     # Constants for the ELO rating calculation (Try to experiment with these values)
     K = 32
     E = 1 / (1 + 10 ** ((loser_elo - winner_elo) / 400))
@@ -57,11 +61,20 @@ def update_elos(winner_elo, loser_elo):
     # Calculate the new ELO ratings
     winner_new_elo = winner_elo + K * (1 - E)
     loser_new_elo = loser_elo + K * (0 - E)
+    
+    # Print the changes (event_IDs and ELO ratings new and old)
+    # Only for testing purposes  
+    print(f"Winner: {winner_id}, Old ELO: {winner_elo.values[0]}, New ELO: {winner_new_elo}")
+    print(f"Loser: {loser_id}, Old ELO: {loser_elo.values[0]}, New ELO: {loser_new_elo}")
+
+    # Update the ELO ratings in the study data
+    study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'] = winner_new_elo
+    study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating'] = loser_new_elo
 
     return int(winner_new_elo), int(loser_new_elo)
 
-# Update the confidence of the event
-def update_confidence():
+# Update the instability of the event
+def update_instability():
     pass
 
 # Returns list of 2 DataFrame rows with event details

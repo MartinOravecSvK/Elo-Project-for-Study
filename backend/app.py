@@ -28,6 +28,8 @@ user_progress = {}
 # - Change winner to loser (The users are asked to select the more negative event/experience)
 # - Make sure there are no clashes with the selected events and also make that based on ELO rating
 
+# Local function that does some user_id checks and some puts the events into correct format
+# It runs the get_next_events_based_on_elo function which is the main algorithm for selecting the next events
 def get_next_events(user_id):
     if user_id not in user_progress:
         user_progress[user_id] = [0, []]
@@ -158,21 +160,24 @@ def submit_answer():
         'number_of_questions': number_of_questions,
     }
 
+    update_elos(winner_id, loser_id, study_data)
+
     # Get the ELO ratings of the winner and loser
-    winner_elo = study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating']
-    loser_elo = study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating']
+    # winner_elo = study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating']
+    # loser_elo = study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating']
 
-    # Get updated ELO ratings
-    winner_new_elo, loser_new_elo = update_elos(winner_elo.values[0], loser_elo.values[0])
 
-    # Print the changes (event_IDs and ELO ratings new and old)
-    # Only for testing purposes  
-    print(f"Winner: {winner_id}, Old ELO: {winner_elo.values[0]}, New ELO: {winner_new_elo}")
-    print(f"Loser: {loser_id}, Old ELO: {loser_elo.values[0]}, New ELO: {loser_new_elo}")
+    # # Get updated ELO ratings
+    # winner_new_elo, loser_new_elo = update_elos(winner_elo.values[0], loser_elo.values[0])
 
-    # Update the ELO ratings in the study data
-    study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'] = winner_new_elo
-    study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating'] = loser_new_elo
+    # # Print the changes (event_IDs and ELO ratings new and old)
+    # # Only for testing purposes  
+    # print(f"Winner: {winner_id}, Old ELO: {winner_elo.values[0]}, New ELO: {winner_new_elo}")
+    # print(f"Loser: {loser_id}, Old ELO: {loser_elo.values[0]}, New ELO: {loser_new_elo}")
+
+    # # Update the ELO ratings in the study data
+    # study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'] = winner_new_elo
+    # study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating'] = loser_new_elo
 
     # Update the category and classification counters
     study_data.loc[study_data['event_ID'] == winner_id, category] += 1
