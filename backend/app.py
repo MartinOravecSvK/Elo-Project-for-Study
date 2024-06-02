@@ -1,15 +1,12 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from utils.data_functions import get_study_data, update_elos
-
-# For testing purposes
-import random
+from utils.data_functions import get_study_data, update_elos, get_next_events_based_on_elo
 
 # Create a Flask app
 app = Flask(__name__)
 CORS(app)
 app.secret_key = 'your_secret_key'
-number_of_questions = 2
+number_of_questions = 1000
 
 # Load the study data as pandas DataFrame
 study_data = get_study_data()
@@ -23,21 +20,11 @@ user_progress = {}
 
 # TODO:
 # - Change route names
-# - Add next events be probabilistic based on ELO ratings
 # - Maybe in the post also add requirement to add the loser ID for sanity check
 # - Test limits
-# - Change winner to loser (The users are asked to select the more negative event/experience)
-# - Make sure there are no clashes with the selected events and also make that based on ELO rating
 
-# Put this into data_functions.py
-# Returns list of 2 DataFrame rows with event details
-def get_next_events_based_on_elo():
-    next_events = [study_data.loc[study_data['event_ID'] == random.randint(1, len(study_data))] for _ in range(1)]
-    # For testing purposes include the longest event_details
-    next_events.append(study_data.loc[study_data['event_ID'] == 342])
-
-    return next_events
-
+# Local function that does some user_id checks and some puts the events into correct format
+# It runs the get_next_events_based_on_elo function which is the main algorithm for selecting the next events
 def get_next_events(user_id):
     if user_id not in user_progress:
         user_progress[user_id] = [0, []]
@@ -48,15 +35,15 @@ def get_next_events(user_id):
 
     # For now get 2 random even_details from study_data
     # Also right now you can get 2 same events
-    next_events = get_next_events_based_on_elo()
+    next_events = get_next_events_based_on_elo(study_data)
 
     # Set curret events for the user using int(event_ID)s
-    user_progress[user_id][1] = [int(next_event['event_ID'].values[0]) for next_event in next_events]
+    user_progress[user_id][1] = [int(next_event['event_ID']) for next_event in next_events]
 
     next_events_dict = {}
     for i, next_event in enumerate(next_events):
-        next_events_dict[f"event{i}_details"] = str(next_event['event_details'].values[0])
-        next_events_dict[f"event{i}_ID"] = int(next_event['event_ID'].values[0])
+        next_events_dict[f"event{i}_details"] = str(next_event['event_details'])
+        next_events_dict[f"event{i}_ID"] = int(next_event['event_ID'])
 
     return next_events_dict
 
@@ -136,12 +123,12 @@ def submit_answer():
 
         return jsonify({"message": "Study completed", 'progress': progress}), 200
     
-    # winner is actuallu a loser since the users are selecting the more negative event/experiencce
-    winner_id = int(request.json.get('winner_id'))
-    if not winner_id:
+    # Get the winner and loser IDs from the chosen event that is more negative (frmo the participant)
+    loser_id = int(request.json.get('moreNegative'))
+    if not loser_id:
         return jsonify({"error": "Answer not provided"}), 400
     
-    loser_id = int(user_progress[user_id][1][0]) if int(user_progress[user_id][1][0]) != winner_id else int(user_progress[user_id][1][1])
+    winner_id = int(user_progress[user_id][1][0]) if int(user_progress[user_id][1][0]) != loser_id else int(user_progress[user_id][1][1])
 
     category = request.json.get('category')
     if not category:
@@ -168,21 +155,24 @@ def submit_answer():
         'number_of_questions': number_of_questions,
     }
 
+    update_elos(winner_id, loser_id, study_data)
+
     # Get the ELO ratings of the winner and loser
-    winner_elo = study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating']
-    loser_elo = study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating']
+    # winner_elo = study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating']
+    # loser_elo = study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating']
 
-    # Get updated ELO ratings
-    winner_new_elo, loser_new_elo = update_elos(winner_elo.values[0], loser_elo.values[0])
 
-    # Print the changes (event_IDs and ELO ratings new and old)
-    # Only for testing purposes  
-    print(f"Winner: {winner_id}, Old ELO: {winner_elo.values[0]}, New ELO: {winner_new_elo}")
-    print(f"Loser: {loser_id}, Old ELO: {loser_elo.values[0]}, New ELO: {loser_new_elo}")
+    # # Get updated ELO ratings
+    # winner_new_elo, loser_new_elo = update_elos(winner_elo.values[0], loser_elo.values[0])
 
-    # Update the ELO ratings in the study data
-    study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'] = winner_new_elo
-    study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating'] = loser_new_elo
+    # # Print the changes (event_IDs and ELO ratings new and old)
+    # # Only for testing purposes  
+    # print(f"Winner: {winner_id}, Old ELO: {winner_elo.values[0]}, New ELO: {winner_new_elo}")
+    # print(f"Loser: {loser_id}, Old ELO: {loser_elo.values[0]}, New ELO: {loser_new_elo}")
+
+    # # Update the ELO ratings in the study data
+    # study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'] = winner_new_elo
+    # study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating'] = loser_new_elo
 
     # Update the category and classification counters
     study_data.loc[study_data['event_ID'] == winner_id, category] += 1
