@@ -22,8 +22,6 @@ user_progress = {}
 # - Change route names
 # - Maybe in the post also add requirement to add the loser ID for sanity check
 # - Test limits
-# - Change winner to loser (The users are asked to select the more negative event/experience)
-# - Make sure there are no clashes with the selected events and also make that based on ELO rating
 
 # Local function that does some user_id checks and some puts the events into correct format
 # It runs the get_next_events_based_on_elo function which is the main algorithm for selecting the next events
@@ -125,12 +123,12 @@ def submit_answer():
 
         return jsonify({"message": "Study completed", 'progress': progress}), 200
     
-    # winner is actuallu a loser since the users are selecting the more negative event/experiencce
-    winner_id = int(request.json.get('winner_id'))
-    if not winner_id:
+    # Get the winner and loser IDs from the chosen event that is more negative (frmo the participant)
+    loser_id = int(request.json.get('moreNegative'))
+    if not loser_id:
         return jsonify({"error": "Answer not provided"}), 400
     
-    loser_id = int(user_progress[user_id][1][0]) if int(user_progress[user_id][1][0]) != winner_id else int(user_progress[user_id][1][1])
+    winner_id = int(user_progress[user_id][1][0]) if int(user_progress[user_id][1][0]) != loser_id else int(user_progress[user_id][1][1])
 
     category = request.json.get('category')
     if not category:
