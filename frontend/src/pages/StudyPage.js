@@ -91,7 +91,7 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone }) {
                 },
                 body: JSON.stringify({
                     user_id: userId,
-                    winner_id: moreNegative,
+                    moreNegative: moreNegative,
                     category: category,
                     classification: classification,
                 }),
