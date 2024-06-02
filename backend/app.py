@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from utils.data_functions import get_study_data, update_elos
+from utils.data_functions import get_study_data, update_elos, get_next_events_based_on_elo
 
 # For testing purposes
 import random
@@ -23,20 +23,10 @@ user_progress = {}
 
 # TODO:
 # - Change route names
-# - Add next events be probabilistic based on ELO ratings
 # - Maybe in the post also add requirement to add the loser ID for sanity check
 # - Test limits
 # - Change winner to loser (The users are asked to select the more negative event/experience)
 # - Make sure there are no clashes with the selected events and also make that based on ELO rating
-
-# Put this into data_functions.py
-# Returns list of 2 DataFrame rows with event details
-def get_next_events_based_on_elo():
-    next_events = [study_data.loc[study_data['event_ID'] == random.randint(1, len(study_data))] for _ in range(1)]
-    # For testing purposes include the longest event_details
-    next_events.append(study_data.loc[study_data['event_ID'] == 342])
-
-    return next_events
 
 def get_next_events(user_id):
     if user_id not in user_progress:
@@ -48,7 +38,7 @@ def get_next_events(user_id):
 
     # For now get 2 random even_details from study_data
     # Also right now you can get 2 same events
-    next_events = get_next_events_based_on_elo()
+    next_events = get_next_events_based_on_elo(study_data)
 
     # Set curret events for the user using int(event_ID)s
     user_progress[user_id][1] = [int(next_event['event_ID'].values[0]) for next_event in next_events]

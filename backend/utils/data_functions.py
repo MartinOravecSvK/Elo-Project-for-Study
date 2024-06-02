@@ -1,5 +1,7 @@
 from pandas import read_excel
 from os import path
+import random
+import numpy as np
 
 # Columns to drop from the study data                          
 # 'event_valence' might be useful for better ELO rating calculation
@@ -21,8 +23,15 @@ def get_study_data():
     study_data.drop(columns=DROP_COLUMNS, inplace=True)
 
     # Initialize ELO rating for each sentence based on the slider_end column ((doesn't make sense)0 - (makes complete sense)100)
-    # Adding 950 centers the ELO rating to 1000 (might not be the best approach, but it's a simple one for this example) 
-    study_data['elo_rating'] = 950 + study_data['slider_end']
+    slider_factor = 2.5
+    study_data['elo_rating'] = (1000 - 50 * slider_factor) + study_data['slider_end'] * slider_factor
+
+    # Add a column to keep track of the number of times the event has been seen
+    # Since, ideally, all events should be seen the same number of times
+    study_data['seen'] = 0
+
+    # Add instability column [+/-]
+    study_data['instability'] = 0
 
     # Drop the slider_end column
     study_data.drop(columns=['slider_end'], inplace=True)
@@ -50,6 +59,56 @@ def update_elos(winner_elo, loser_elo):
     loser_new_elo = loser_elo + K * (0 - E)
 
     return int(winner_new_elo), int(loser_new_elo)
+
+# Update the confidence of the event
+def update_confidence():
+    pass
+
+# Returns list of 2 DataFrame rows with event details
+def get_next_events_based_on_elo(study_data, window_size=10):
+    # First sort the data by elo_rating
+    # As optimization this should be changed
+    sorted_data = study_data.sort_values(by='elo_rating')
+
+    # Ensure the events are not repeated and their 'seen' counts are balanced
+    eligible_events = sorted_data[(sorted_data['seen'] < sorted_data['seen'].mean() + 2) &
+                                  (sorted_data['seen'] > sorted_data['seen'].mean() - 2)]
+
+     # Randomly select two events close in elo_rating
+    if len(eligible_events) < 2:
+        eligible_events = sorted_data  # Fallback to any events if not enough eligible
+
+    # Randomly select the first event
+    index1 = random.randint(0, len(eligible_events) - 1)
+
+    # Define the range for the second event selection
+    lower_bound = max(0, index1 - window_size)
+    upper_bound = min(len(eligible_events) - 1, index1 + window_size)
+
+    # Generate a range of indices around the first event
+    # This is needed as the lower and upper bounds might be out of the DataFrame index range
+    indices = np.arange(lower_bound, upper_bound + 1)
+
+    # Calculate probabilities using Gaussian PDF centered at index1
+    mean = index1
+    # Standard deviation can be adjusted
+    sigma = window_size / 2 
+    probabilities = np.exp(-0.5 * ((indices - mean) / sigma) ** 2)
+    # Normalize to sum to 1
+    probabilities /= probabilities.sum() 
+
+    # Select the second event probabilistically
+    index2 = np.random.choice(indices, p=probabilities)
+
+    # Update the 'seen' counter for both events
+    study_data.at[eligible_events.iloc[index1].name, 'seen'] += 1
+    study_data.at[eligible_events.iloc[index2].name, 'seen'] += 1
+
+    event1 = eligible_events.iloc[index1]
+    event2 = eligible_events.iloc[index2]
+
+    return [event1, event2]
+
 
 if __name__ == '__main__':
     # Load the study data
