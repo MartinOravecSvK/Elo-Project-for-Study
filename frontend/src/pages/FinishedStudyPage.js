@@ -1,12 +1,10 @@
 import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import './FinishedStudyPage.css';  // Ensure your CSS is being imported here
+import './FinishedStudyPage.css'; 
 
 // TODO:
-// - Fix broken Logo image path (there is none that is valid)
 // - Double check it works as intended
 // - Use <img> with script fallbacks to png version (for older IE and android < 3). One clean and simple way to do that: <img src="your.svg" onerror="this.src='your.png'">
-
 
 function FinishedStudyPage() {
 
@@ -16,7 +14,7 @@ function FinishedStudyPage() {
             // Redirect the participant after a delay
             // For production, change the delay to 5000 (5 seconds)
             setTimeout(() => {
-                window.location.href = `https://app.prolific.com/submissions/complete?cc=${participantId}`;
+                window.location.href = `https://app.prolific.com/submissions/complete?cc=COBF1PK2&participant_id=${participantId}`;
             }, 500000);
         } else {
             // If participant ID is not found, give them an option to input it manually if it makes sense
@@ -57,7 +55,7 @@ function FinishedStudyPage() {
                     </b></p>
                     <p>
                         <b>
-                            <a href={`https://app.prolific.com/submissions/complete?cc=${localStorage.getItem('participant_id')}`} >
+                            <a href={`https://app.prolific.com/submissions/complete?cc=COBF1PK2&participant_id=${localStorage.getItem('participant_id')}`} >
                                 Click here to finish study
                             </a>
                         </b>
