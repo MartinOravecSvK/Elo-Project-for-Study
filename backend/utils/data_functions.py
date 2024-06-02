@@ -112,7 +112,10 @@ def get_next_events_based_on_elo(study_data, window_size=10):
     probabilities /= probabilities.sum() 
 
     # Select the second event probabilistically
+    # Ensure index2 is not the same as index1
     index2 = np.random.choice(indices, p=probabilities)
+    while index1 == index2:
+        index2 = np.random.choice(indices, p=probabilities)
 
     # Update the 'seen' counter for both events
     study_data.at[eligible_events.iloc[index1].name, 'seen'] += 1
