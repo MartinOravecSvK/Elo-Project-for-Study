@@ -2,14 +2,11 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from utils.data_functions import get_study_data, update_elos, get_next_events_based_on_elo
 
-# For testing purposes
-import random
-
 # Create a Flask app
 app = Flask(__name__)
 CORS(app)
 app.secret_key = 'your_secret_key'
-number_of_questions = 2
+number_of_questions = 1000
 
 # Load the study data as pandas DataFrame
 study_data = get_study_data()
@@ -43,12 +40,12 @@ def get_next_events(user_id):
     next_events = get_next_events_based_on_elo(study_data)
 
     # Set curret events for the user using int(event_ID)s
-    user_progress[user_id][1] = [int(next_event['event_ID'].values[0]) for next_event in next_events]
+    user_progress[user_id][1] = [int(next_event['event_ID']) for next_event in next_events]
 
     next_events_dict = {}
     for i, next_event in enumerate(next_events):
-        next_events_dict[f"event{i}_details"] = str(next_event['event_details'].values[0])
-        next_events_dict[f"event{i}_ID"] = int(next_event['event_ID'].values[0])
+        next_events_dict[f"event{i}_details"] = str(next_event['event_details'])
+        next_events_dict[f"event{i}_ID"] = int(next_event['event_ID'])
 
     return next_events_dict
 
