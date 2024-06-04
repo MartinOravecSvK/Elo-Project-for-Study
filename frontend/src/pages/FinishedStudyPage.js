@@ -5,8 +5,12 @@ import './FinishedStudyPage.css';
 // TODO:
 // - Double check it works as intended
 // - Use <img> with script fallback to png version (for older IE and android < 3). One clean and simple way to do that: <img src="your.svg" onerror="this.src='your.png'">
+// - Does the prolific_id need to be included in the return link?
 
 function FinishedStudyPage() {
+    // Change this code for each study
+    // If possible add this to the backend and fetch it from there (store it inside a .env file or similar)
+    const completion_code = "COBF1PK2";
 
     useEffect(() => {
         const participantId = localStorage.getItem('participant_id');
@@ -14,8 +18,8 @@ function FinishedStudyPage() {
             // Redirect the participant after a delay
             // For production, change the delay to 5000 (5 seconds)
             setTimeout(() => {
-                window.location.href = `https://app.prolific.com/submissions/complete?cc=COBF1PK2&participant_id=${participantId}`;
-            }, 500000);
+                window.location.href = `https://app.prolific.com/submissions/complete?cc=${completion_code}&participant_id=${participantId}`;
+            }, 5000);
         } else {
             // If participant ID is not found, give them an option to input it manually if it makes sense
         }
@@ -27,7 +31,7 @@ function FinishedStudyPage() {
             {/* Using Helmet instead of Head as you can't normally directly change head of the html page in react thus we use a  library react-helmet*/}
             <Helmet>
                 <title>End Study</title>
-                {/* <meta http-equiv="refresh" content="5; url=https://app.prolific.com/submissions/complete?cc=COBF1PK2" /> */}
+                {/* <meta http-equiv="refresh" content="5; url=https://app.prolific.com/submissions/complete?cc=${completion_code}" /> */}
 
             </Helmet>
             <div className="jspsych-content-wrapper">
@@ -55,7 +59,7 @@ function FinishedStudyPage() {
                     </b></p>
                     <p>
                         <b>
-                            <a href={`https://app.prolific.com/submissions/complete?cc=COBF1PK2&participant_id=${localStorage.getItem('participant_id')}`} >
+                            <a href={`https://app.prolific.com/submissions/complete?cc=${completion_code}&participant_id=${localStorage.getItem('participant_id')}`} >
                                 Click here to finish study
                             </a>
                         </b>
