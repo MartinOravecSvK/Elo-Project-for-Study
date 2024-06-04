@@ -8,11 +8,17 @@ import ClassificationComponent from '../components/ClassificationComponent';
 // TODO:
 // - Make it easy to toggle Categories
 
-function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone }) {
+function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, blockSize }) {
+    const useCategory = true;
+    const useClassification = true;
     const [events, setEvents] = useState({});
+    let counter = 0;
 
     // event ID of the event with more negative sentiment
-    const [moreNegative, setMoreNegative] = useState(null);
+    const [loser_id, setLoser_id] = useState(null);
+    // event ID of the event with more positive sentiment
+    const [winner_id, setWinner_id] = useState(null);
+
     // Right now just using the more negative event ID and deriving the other on the backend
     // const [morePositive, setMorePositive] = useState(null);
     
@@ -70,9 +76,14 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone }) {
             return;
         }
 
-        if (!moreNegative) {
+        if (!loser_id) {
             // Change this to show a message to the user
             console.error('More negative event ID not found');
+            return;
+        }
+        if (!winner_id) {
+            // Change this to show a message to the user
+            console.error('More positive event ID not found');
             return;
         }
         if (!category) {
@@ -87,6 +98,19 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone }) {
         }
 
         try {
+            // These statements handle switching for different questions
+            // Asking which scenario is worse and which is better
+            if (counter <= blockSize && worseStart) {
+                let temp = loser_id;
+                setLoser_id(winner_id);
+                setWinner_id(temp);
+            } else if(counter > blockSize && !worseStart) {
+                let temp = loser_id;
+                setLoser_id(winner_id);
+                setWinner_id(temp);
+            }
+            counter += 1;
+
             const response = await fetch('http://localhost:5000/submit', {
                 method: 'POST',
                 headers: {
@@ -94,7 +118,8 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone }) {
                 },
                 body: JSON.stringify({
                     user_id: userId,
-                    moreNegative: moreNegative,
+                    loser_id: loser_id,
+                    winner_id: winner_id,
                     category: category,
                     classification: classification,
                 }),
@@ -115,7 +140,8 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone }) {
                 }
             }
             // Reset the states
-            setMoreNegative(null);
+            setLoser_id(null);
+            setWinner_id(null);
             setCategory(null);
             setClassification(null);
         } catch (error) {
@@ -126,11 +152,17 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone }) {
     return (
         <div className='StudyPage'>
             {events && Object.keys(events).length > 0 ? (
-                <ExperienceComponent setMoreNegative={setMoreNegative} events={events} />
+                <ExperienceComponent 
+                    setLoser_id={setLoser_id} 
+                    setWinner_id={setWinner_id} events={events}  
+                    counter={counter} 
+                    blockSize={blockSize} 
+                    worseStart={worseStart}
+                />
             ) : (
                 <p>No more events to show. Study completed!</p>
             )}
-            {moreNegative != null && (
+            {winner_id != null && loser_id != null && (
                 <CategoryComponent setCategory={setCategory} />
             )}
             {category != null && (

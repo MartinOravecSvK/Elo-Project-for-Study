@@ -6,6 +6,7 @@ from utils.data_functions import get_study_data, update_elos, get_next_events_ba
 app = Flask(__name__)
 CORS(app)
 app.secret_key = 'your_secret_key'
+# Ideally divisible by two due to block size
 number_of_questions = 2
 
 # Load the study data as pandas DataFrame
@@ -22,7 +23,7 @@ user_progress = {}
 # - Change route names
 # - Maybe in the post also add requirement to add the loser ID for sanity check
 # - Test limits
-# - Change the logo
+
 # - Scenario rather than experience
 # - Get the questions polarity in the response
 # - Better and Worse Questions
@@ -130,11 +131,20 @@ def submit_answer():
         return jsonify({"message": "Study completed", 'progress': progress}), 200
     
     # Get the winner and loser IDs from the chosen event that is more negative (frmo the participant)
-    loser_id = int(request.json.get('moreNegative'))
-    if not loser_id:
+    loser_id = int(request.json.get('loser_id'))
+    winner_id = int(request.json.get('winner_id'))
+
+    if not winner_id or not loser_id:
         return jsonify({"error": "Answer not provided"}), 400
     
-    winner_id = int(user_progress[user_id][1][0]) if int(user_progress[user_id][1][0]) != loser_id else int(user_progress[user_id][1][1])
+    if winner_id not in user_progress[user_id][1] or loser_id not in user_progress[user_id][1]:
+        return jsonify({"error": "Invalid answer"}), 400
+
+
+    # if not loser_id:
+    #     return jsonify({"error": "Answer not provided"}), 400
+    
+    # winner_id = int(user_progress[user_id][1][0]) if int(user_progress[user_id][1][0]) != loser_id else int(user_progress[user_id][1][1])
 
     category = request.json.get('category')
     if not category:
@@ -190,7 +200,7 @@ def check_generated_user_id():
         return jsonify({"message": "User ID already exists"}), 200
 
     # Also include the number of questions the user has to answer
-    return jsonify({"message": "User ID is valid"}), 200
+    return jsonify({"message": "User ID is valid", "questions_num": number_of_questions}), 200
 
 @app.route('/', methods=['GET'])
 def home():
