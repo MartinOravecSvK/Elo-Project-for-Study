@@ -13,10 +13,6 @@ function HeaderComponent({ eventsNum, eventsDone }) {
                 src="/UoBLogo.svg"
                 alt="University of Bristol Logo"
             />
-            {/* <div className='ProgressContainer'>
-                <progress className='ProgressBar' value={progressPercentage} max="100"></progress>
-                <span>{`${eventsDone} / ${eventsNum} completed`}</span>
-            </div> */}
             <div className='ProgressContainer'>
                 <span>{`${eventsDone} / ${eventsNum} Completed`}</span>
                 <div className='ProgressBarWrapper'>
@@ -24,7 +20,7 @@ function HeaderComponent({ eventsNum, eventsDone }) {
                     <div className='ProgressLabel'>{`${progressPercentage}%`}</div>
                 </div>
             </div>
-            <h1 className='StudyName'>Name of the study</h1>
+            <h1 className='StudyName'>Comparing Life Experiences</h1>
         </header>
     );
 }

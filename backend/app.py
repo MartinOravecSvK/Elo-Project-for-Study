@@ -6,7 +6,7 @@ from utils.data_functions import get_study_data, update_elos, get_next_events_ba
 app = Flask(__name__)
 CORS(app)
 app.secret_key = 'your_secret_key'
-number_of_questions = 20
+number_of_questions = 2
 
 # Load the study data as pandas DataFrame
 study_data = get_study_data()
@@ -22,6 +22,12 @@ user_progress = {}
 # - Change route names
 # - Maybe in the post also add requirement to add the loser ID for sanity check
 # - Test limits
+# - Change the logo
+# - Scenario rather than experience
+# - Get the questions polarity in the response
+# - Better and Worse Questions
+# - Add no same pairs for user check
+# - Check prolific stuff
 
 # Local function that does some user_id checks and some puts the events into correct format
 # It runs the get_next_events_based_on_elo function which is the main algorithm for selecting the next events
@@ -156,7 +162,7 @@ def submit_answer():
     }
 
     update_elos(winner_id, loser_id, study_data)
-    
+
     # Update the category and classification counters
     study_data.loc[study_data['event_ID'] == winner_id, category] += 1
     study_data.loc[study_data['event_ID'] == winner_id, classification] += 1
