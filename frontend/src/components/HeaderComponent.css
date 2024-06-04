@@ -3,11 +3,11 @@
     justify-content: space-between;
     align-items: center;
     height: 30px; 
-    border-bottom: 1px solid #e9ecef;
+    /* border-bottom: 1px solid #e9ecef; */
 }
 
 .Logo {
-    height: 100%;
+    height: 150%;
     width: auto;
 }
 
@@ -15,18 +15,6 @@
     font-size: 24px;
     font-weight: bold;
 }
-
-/* .ProgressContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex-grow: 1;
-}
-
-.ProgressBar {
-    width: 80%;
-    height: 20px;
-} */
 
 .ProgressContainer {
     display: flex;
@@ -37,12 +25,12 @@
   
 .ProgressBarWrapper {
     position: relative;
-    width: 80%;
+    width: 90%;
 }
   
 .ProgressBar {
     width: 100%;
-    height: 20px;
+    height: 22px;
     -webkit-appearance: none;
     appearance: none;
 }
@@ -52,11 +40,13 @@
 }
 
 .ProgressBar::-webkit-progress-value {
-    background-color: #76c7c0;
+    /* background-color: #76c7c0; */
+    background-color: #007bff;
 }
 
 .ProgressBar::-moz-progress-bar {
-    background-color: #76c7c0;
+    /* background-color: #76c7c0; */
+    background-color: #007bff;
 }
 
 .ProgressLabel {
@@ -68,5 +58,6 @@
     line-height: 20px;
     color: #fff; 
     font-weight: bold;
+    font-size: 18px;
 }
   

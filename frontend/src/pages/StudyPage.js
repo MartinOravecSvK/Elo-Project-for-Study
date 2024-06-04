@@ -5,6 +5,9 @@ import ExperienceComponent from '../components/ExperienceComponent';
 import CategoryComponent from '../components/CategoryComponent';
 import ClassificationComponent from '../components/ClassificationComponent';
 
+// TODO:
+// - Make it easy to toggle Categories
+
 function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone }) {
     const [events, setEvents] = useState({});
 
