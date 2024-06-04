@@ -11,7 +11,7 @@ function App() {
     const [eventsDone, setEventsDone] = useState(0);
 
     // Sets the first block of questions to be for users to select worse scebario
-    const [startWorse, setStartWorse] = useState(Math.random() >= 0.5);
+    const startWorse = Math.random() >= 0.5;
     const [blockSize, setBlockSize] = useState(0);
 
     // This useEffect hook handled getting the participant ID from the URL and storing it in the browser's local storage
@@ -80,6 +80,7 @@ function App() {
                     setEventsDone={setEventsDone}  
                     startWorse={startWorse} 
                     blockSize={blockSize} 
+                    worseStart={startWorse}
                 />
             }
         </div>

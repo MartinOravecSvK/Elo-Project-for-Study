@@ -12,7 +12,7 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
     const useCategory = true;
     const useClassification = true;
     const [events, setEvents] = useState({});
-    let counter = 0;
+    const [counter, setCounter] = useState(0);
 
     // event ID of the event with more negative sentiment
     const [loser_id, setLoser_id] = useState(null);
@@ -98,6 +98,7 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
         }
 
         try {
+            console.log(counter, blockSize, worseStart)
             // These statements handle switching for different questions
             // Asking which scenario is worse and which is better
             if (counter <= blockSize && worseStart) {
@@ -109,7 +110,7 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
                 setLoser_id(winner_id);
                 setWinner_id(temp);
             }
-            counter += 1;
+            setCounter(counter + 1);
 
             const response = await fetch('http://localhost:5000/submit', {
                 method: 'POST',
