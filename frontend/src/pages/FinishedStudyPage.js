@@ -4,7 +4,6 @@ import './FinishedStudyPage.css';
 
 // TODO:
 // - Double check it works as intended
-// - Use <img> with script fallback to png version (for older IE and android < 3). One clean and simple way to do that: <img src="your.svg" onerror="this.src='your.png'">
 // - Does the prolific_id need to be included in the return link?
 
 function FinishedStudyPage() {
