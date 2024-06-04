@@ -5,7 +5,7 @@ import numpy as np
 
 # Columns to drop from the study data                          
 # 'event_valence' might be useful for better ELO rating calculation
-DROP_COLUMNS = ['fileName', 'study_number', 'participant_ID', 'event_valence', 'event_when', 'event_known']
+DROP_COLUMNS = ['fileName', 'study_number', 'participant_ID', 'event_valence', 'event_when', 'event_known', 'Use?']
 
 # Additional columns for the study data (all just counters)
 categories = ['Health', 'Financial', 'Relationship', 'Bereavement', 'Work', 'Crime']
@@ -16,10 +16,15 @@ classification = ['Daily', 'Major']
 def get_study_data():
     # Get the study data path
     current_dir = path.dirname(path.abspath(__file__))
-    study_data_path = path.join(current_dir, '../data/All_Studies_SigEvent_details.xlsx')
+    study_data_path = path.join(current_dir, '../data/All_Studies_SigEvent_details_CLEANED_23.05.2024.xlsx')
 
     # Load the study data
     study_data = read_excel(study_data_path)
+
+    # Use only rows with Use? set to Yes
+    study_data = study_data[study_data['Use?'] == 'Yes']
+
+    # Drop the unnecessary columns
     study_data.drop(columns=DROP_COLUMNS, inplace=True)
 
     # Initialize ELO rating for each sentence based on the slider_end column ((doesn't make sense)0 - (makes complete sense)100)
