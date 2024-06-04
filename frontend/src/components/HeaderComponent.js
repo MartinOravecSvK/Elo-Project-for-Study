@@ -10,7 +10,7 @@ function HeaderComponent({ eventsNum, eventsDone }) {
         <header className='HeaderWrapper'>
             <img
                 className='Logo'
-                src="/UoBLogo.svg"
+                src="/UoB_CMYK_24.svg"
                 alt="University of Bristol Logo"
             />
             <div className='ProgressContainer'>

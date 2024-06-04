@@ -39,7 +39,8 @@ function FinishedStudyPage() {
                     <div style={{ width: '100%' }}>
                         <img
                             style={{ display: 'block', margin: '0 auto', width: '200px', height: 'auto' }}
-                            src="/UoBLogo.svg"
+                            src="/UoB_CMYK_24.svg"
+                            alt="University of Bristol Logo"
                         />
                     </div>
                     <h2><b>
