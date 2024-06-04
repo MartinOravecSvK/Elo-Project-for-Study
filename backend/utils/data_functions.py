@@ -70,7 +70,9 @@ def update_elos(winner_id, loser_id, study_data):
     # Print the changes (event_IDs and ELO ratings new and old)
     # Only for testing purposes  
     print(f"Winner: {winner_id}, Old ELO: {winner_elo}, New ELO: {winner_new_elo}")
+    print(study_data.loc[study_data['event_ID'] == winner_id, 'event_details'].values[0])
     print(f"Loser: {loser_id}, Old ELO: {loser_elo}, New ELO: {loser_new_elo}")
+    print(study_data.loc[study_data['event_ID'] == loser_id, 'event_details'].values[0])
 
     # Update the ELO ratings in the study data
     study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'] = winner_new_elo

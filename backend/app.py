@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app)
 app.secret_key = 'your_secret_key'
 # Ideally divisible by two due to block size
-number_of_questions = 2
+number_of_questions = 4
 
 # Load the study data as pandas DataFrame
 study_data = get_study_data()
