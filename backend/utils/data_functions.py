@@ -29,7 +29,7 @@ def get_study_data():
 
     # Initialize ELO rating for each sentence based on the slider_end column ((doesn't make sense)0 - (makes complete sense)100)
     slider_factor = 2.5
-    study_data['elo_rating'] = (1000 - 50 * slider_factor) + study_data['slider_end'] * slider_factor
+    study_data['elo_rating'] = ((1000 - 50 * slider_factor) + study_data['slider_end'] * slider_factor).astype(int)
 
     # Add a column to keep track of the number of times the event has been seen
     # Since, ideally, all events should be seen the same number of times
