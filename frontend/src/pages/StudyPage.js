@@ -7,37 +7,24 @@ import ClassificationComponent from '../components/ClassificationComponent';
 
 // TODO:
 // - Make it easy to toggle Categories
+// - Refactor the code to make it more readable
 
-function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, blockSize }) {
-    const useCategory = true;
-    const useClassification = true;
+function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, blockSize, setBlockSize }) {
+    const otherFields = true;
     const [events, setEvents] = useState({});
     const [counter, setCounter] = useState(0);
-
-    // event ID of the event with more negative sentiment
     const [loser_id, setLoser_id] = useState(null);
-    // event ID of the event with more positive sentiment
     const [winner_id, setWinner_id] = useState(null);
-
-    // Right now just using the more negative event ID and deriving the other on the backend
-    // const [morePositive, setMorePositive] = useState(null);
-    
-    // Category of the event with more negative sentiment
-    // Categories include: [Health, Financial, Relationship, Bereavement, Work, Crime]
     const [category, setCategory] = useState(null);
-
-    // Classification, Daily or Major
     const [classification, setClassification] = useState(null);
-
+    
     // Replace 'some-unique-user-id' with a unique identifier for the user (generate some and store it in browser's local storage)
     const userId = localStorage.getItem('user_id') || null;
-    console.log('User ID:', userId);
-
-    if (!userId) {
-        console.error('User ID not found in local storage');
-    }
-
+    
     useEffect(() => {
+        if (!userId) {
+            console.error('User ID not found in local storage');
+        }
         fetchEvents();
     }, []);
 
@@ -47,15 +34,12 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
             const data = await response.json();
             if (data.events) {
                 setEvents(data.events);
-                // For production, remove console.log
-                console.log('New events fetched:', data.events)
                 setEventsDone(data.progress.current_completed);
                 setEventsNum(data.progress.number_of_questions);
+                setBlockSize(Math.trunc(data.progress.number_of_questions/2));
             } else {
-                // For production, remove console.log 
                 console.log(data.error || data.message || 'No events found')
                 setEvents({});
-                // Check to see if the study is completed
                 if (data.message === 'Study completed') {
                     setFinishedStudy(true);
                     setEventsDone(data.progress.current_completed);
@@ -66,6 +50,19 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
             console.error('Error fetching events:', error);
         }
     };
+
+    const switchLoserWinnerIds = () => {
+        setLoser_id((prevLoserId) => {
+            setWinner_id(prevLoserId);
+            return winner_id;
+        });
+    };
+
+    useEffect(() => {
+        if ((counter < blockSize && worseStart) || (counter >= blockSize && !worseStart)) {
+            switchLoserWinnerIds();
+        }
+    }, [counter]);
 
     const submitAnswer = async () => {
         // First check that all the required states are set
@@ -86,31 +83,28 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
             console.error('More positive event ID not found');
             return;
         }
-        if (!category) {
-            // Change this to show a message to the user
-            console.error('Category not found');
-            return;
-        }
-        if (!classification) {
-            // Change this to show a message to the user
-            console.error('Classification not found');
-            return;
+
+        if (otherFields) {
+            if (!category) {
+                // Change this to show a message to the user
+                console.error('Category not found');
+                return;
+            }
+            if (!classification) {
+                // Change this to show a message to the user
+                console.error('Classification not found');
+                return;
+            }
         }
 
+        const shouldSwitch = (counter < blockSize && worseStart) || (counter >= blockSize && !worseStart);
+        const finalLoserId = shouldSwitch ? winner_id : loser_id;
+        const finalWinnerId = shouldSwitch ? loser_id : winner_id;
+
+        setCounter(counter + 1);
+        console.log('Counter: ', counter)
+        
         try {
-            console.log(counter, blockSize, worseStart)
-            // These statements handle switching for different questions
-            // Asking which scenario is worse and which is better
-            if (counter <= blockSize && worseStart) {
-                let temp = loser_id;
-                setLoser_id(winner_id);
-                setWinner_id(temp);
-            } else if(counter > blockSize && !worseStart) {
-                let temp = loser_id;
-                setLoser_id(winner_id);
-                setWinner_id(temp);
-            }
-            setCounter(counter + 1);
 
             const response = await fetch('http://localhost:5000/submit', {
                 method: 'POST',
@@ -119,8 +113,8 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
                 },
                 body: JSON.stringify({
                     user_id: userId,
-                    loser_id: loser_id,
-                    winner_id: winner_id,
+                    loser_id: finalLoserId,
+                    winner_id: finalWinnerId,
                     category: category,
                     classification: classification,
                 }),
@@ -140,14 +134,17 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
                     setEventsNum(data.progress.number_of_questions);
                 }
             }
-            // Reset the states
-            setLoser_id(null);
-            setWinner_id(null);
-            setCategory(null);
-            setClassification(null);
+            resetStates();
         } catch (error) {
             console.error('Error submitting answer:', error);
         }
+    };
+
+    const resetStates = () => {
+        setLoser_id(null);
+        setWinner_id(null);
+        setCategory(null);
+        setClassification(null);
     };
 
     return (
@@ -155,7 +152,8 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
             {events && Object.keys(events).length > 0 ? (
                 <ExperienceComponent 
                     setLoser_id={setLoser_id} 
-                    setWinner_id={setWinner_id} events={events}  
+                    setWinner_id={setWinner_id} 
+                    events={events}  
                     counter={counter} 
                     blockSize={blockSize} 
                     worseStart={worseStart}

@@ -61,6 +61,7 @@ function App() {
                 generateUserId();
             } else {
                 localStorage.setItem('user_id', user_id);
+                console.log('Data: ', data);
                 setBlockSize(Math.trunc(data.questions_num/2));
                 setEventsNum(data.questions_num);
             }
@@ -80,6 +81,7 @@ function App() {
                     setEventsDone={setEventsDone}  
                     startWorse={startWorse} 
                     blockSize={blockSize} 
+                    setBlockSize={setBlockSize}
                     worseStart={startWorse}
                 />
             }

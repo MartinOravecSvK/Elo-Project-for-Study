@@ -11,7 +11,7 @@ function ExperienceComponent({ setLoser_id, setWinner_id, events, counter, block
     };
 
     let question = 'From the two experiences below, select the less/more better:';
-    if (counter <= blockSize && worseStart) {
+    if (counter < blockSize && worseStart) {
         question = 'From the two experiences below, select the worst/more negative:';
     } else if (counter > blockSize && !worseStart) {
         question = 'From the two experiences below, select the worst/more negative:';
