@@ -8,6 +8,8 @@ CORS(app)
 app.secret_key = 'your_secret_key'
 # Ideally divisible by two due to block size
 number_of_questions = 4
+# Change this to True if you are not collecting information on the categories and classifications of the events
+omit_other = False
 
 # Load the study data as pandas DataFrame
 study_data = get_study_data()
@@ -19,11 +21,15 @@ print(study_data.columns)
 # It is in the format {user_id: [(int) current_completed, [(int)event_ID1, (int)event_ID2]]}
 user_progress = {}
 
+# Dictionary to keep track of the user answers
+user_answers = {}
+
+blacklist = []
+
 # TODO:
 # - Change route names
 # - Test limits
 
-# - Scenario rather than experience
 # - Get the questions polarity in the response
 # - Better and Worse Questions
 # - Add no same pairs for user check
@@ -120,6 +126,9 @@ def submit_answer():
     if user_id not in user_progress:
         return jsonify({"error": "User ID not found"}), 400
     
+    if user_id in blacklist:
+        return jsonify({"message": "You are no longer a participant"}), 200
+    
     # Check if the user has completed the study
     # In this function it is in two places to avoid any issues when checking for winner_id
     if user_id in user_progress and user_progress[user_id][0] >= number_of_questions:
@@ -140,25 +149,31 @@ def submit_answer():
     if winner_id not in user_progress[user_id][1] or loser_id not in user_progress[user_id][1]:
         return jsonify({"error": "Invalid answer"}), 400
 
+    if not omit_other:
+        category = request.json.get('category')
+        if not category:
+            return jsonify({"error": "Category not provided"}), 400
+        
+        classification = request.json.get('classification')
+        if not classification:
+            return jsonify({"error": "Classification not provided"}), 400
 
-    # if not loser_id:
-    #     return jsonify({"error": "Answer not provided"}), 400
+        # Update the category and classification counters
+        study_data.loc[study_data['event_ID'] == winner_id, category] += 1
+        study_data.loc[study_data['event_ID'] == winner_id, classification] += 1
+
+    update_elos(winner_id, loser_id, study_data)
+
+    if user_id not in user_answers:
+        user_answers[user_id] = []
     
-    # winner_id = int(user_progress[user_id][1][0]) if int(user_progress[user_id][1][0]) != loser_id else int(user_progress[user_id][1][1])
+    if not omit_other:
+        user_answers[user_id].append([winner_id, loser_id, category, classification])
+    else:
+        user_answers[user_id].append([winner_id, loser_id])
 
-    category = request.json.get('category')
-    if not category:
-        return jsonify({"error": "Category not provided"}), 400
-    
-    classification = request.json.get('classification')
-    if not classification:
-        return jsonify({"error": "Classification not provided"}), 400
-
-    # Make sure the winner ID and loser ID are the sane as the assigned event IDs
-    if winner_id not in user_progress[user_id][1]:
-        print(f"Received answer from {user_id}: {winner_id}, {loser_id}")
-        print(f"Assigned events: {user_progress[user_id][1]}")
-        return jsonify({"error": "Invalid answer"}), 400
+    # For testing purposes print all the categories and classifications
+    # print(study_data.loc[study_data['event_ID'] == winner_id, ['Health', 'Financial', 'Relationship', 'Bereavement', 'Work', 'Crime', 'Daily', 'Major']])
 
     # Update the user progress
     user_progress[user_id][0] += 1
@@ -170,15 +185,6 @@ def submit_answer():
         'current_completed': user_progress[user_id][0],
         'number_of_questions': number_of_questions,
     }
-
-    update_elos(winner_id, loser_id, study_data)
-
-    # Update the category and classification counters
-    study_data.loc[study_data['event_ID'] == winner_id, category] += 1
-    study_data.loc[study_data['event_ID'] == winner_id, classification] += 1
-
-    # For testing purposes print all the categories and classifications
-    # print(study_data.loc[study_data['event_ID'] == winner_id, ['Health', 'Financial', 'Relationship', 'Bereavement', 'Work', 'Crime', 'Daily', 'Major']])
 
     # Get the next set of events
     next_events = get_next_events(user_id)
@@ -201,6 +207,18 @@ def check_generated_user_id():
 
     # Also include the number of questions the user has to answer
     return jsonify({"message": "User ID is valid", "questions_num": number_of_questions}), 200
+
+# Used to blacklist a user if they do not pass basic checks
+@app.route('/blacklist', methods=['POST'])
+def blacklist_user():
+    user_id = request.json.get('user_id')
+
+    if user_id not in user_progress:
+        return jsonify({"error": "User ID not found"}), 400
+
+    blacklist.append(user_id)
+
+    return jsonify({"message": "You are no longer a participant"}), 200
 
 @app.route('/', methods=['GET'])
 def home():
