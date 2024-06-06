@@ -1,7 +1,24 @@
+h1 {
+    font-size: 46px;
+    margin-bottom: 20px;
+    color: #007bff;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
 p {
     font-size: 26px;
     line-height: 1.5;
     margin-bottom: 20px;
+}
+
+.InstructionWrapper {
+    text-align: center;
 }
 
 .better {

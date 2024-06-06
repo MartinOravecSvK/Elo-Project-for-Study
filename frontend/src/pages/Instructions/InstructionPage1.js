@@ -11,9 +11,9 @@ function InstructionPage1({ nextPage }) {
             <p>
                 You will be presented with <b>two statements</b> that represent <b>different scenarios</b> that may impact a person's mood. For each pair of statements, you need to decide <ins>in your opinion</ins> which scenario is <ins className='better'>BETTER</ins> or <ins className='worse'>WORSE</ins>, depending on the <b>specific instruction at the of the screen.</b> E.G.:
             </p>
-            <h1>
+            <h3>
                 From the two experiences below, select the less/more better:
-            </h1>
+            </h3>
             <div className="events">
                 <div
                     className={`event ${selectedEvent === 0 ? 'selected' : ''}`}
