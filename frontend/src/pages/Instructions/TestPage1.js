@@ -7,9 +7,6 @@ function TestPage1({ nextPage, userId, setError }) {
 
     const checkThenNext = async () => {
         if (selectedEvent2 === 1) {
-            // Add backend endpoint to block this user
-            alert('Select sensible answer');
-
             try {
                 const response = await fetch('http://localhost:5000/block_user', {
                     method: 'POST',
@@ -25,7 +22,6 @@ function TestPage1({ nextPage, userId, setError }) {
             } catch (error) {
                 console.error('Error blocking user:', error);
             }
-
         } else {
             nextPage();
         }

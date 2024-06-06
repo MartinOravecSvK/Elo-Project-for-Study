@@ -7,8 +7,6 @@ function TestPage2({ nextPage, userId, setError }) {
 
     const checkThenNext = async () => {
         if (selectedEvent2 === 2) {
-            alert('Select sensible answer');
-
             try {
                 const response = await fetch('http://localhost:5000/block_user', {
                     method: 'POST',

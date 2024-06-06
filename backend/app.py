@@ -69,6 +69,9 @@ def get_next():
     # Check if the user ID is provided
     if not user_id:
         return jsonify({"error": "User ID not provided"}), 400
+    
+    if user_id in blacklist:
+        return jsonify({"message": "You are no longer a participant"}), 200
 
     # Check if the user has completed the study
     if user_id in user_progress and user_progress[user_id][0] >= number_of_questions:
@@ -209,12 +212,9 @@ def check_generated_user_id():
     return jsonify({"message": "User ID is valid", "questions_num": number_of_questions}), 200
 
 # Used to blacklist a user if they do not pass basic checks
-@app.route('/blacklist', methods=['POST'])
-def blacklist_user():
+@app.route('/block_user', methods=['POST'])
+def block_user():
     user_id = request.json.get('user_id')
-
-    if user_id not in user_progress:
-        return jsonify({"error": "User ID not found"}), 400
 
     blacklist.append(user_id)
 
@@ -223,6 +223,13 @@ def blacklist_user():
 @app.route('/', methods=['GET'])
 def home():
     user_id = request.args.get('user_id')
+
+    if not user_id:
+        return jsonify({"error": "User ID not provided"}), 400
+
+    if user_id in blacklist:
+        return jsonify({"message": "You are no longer a participant"}), 200
+
     with app.test_request_context('/next', method='GET', query_string={'user_id': user_id}):
         return get_next()
 
