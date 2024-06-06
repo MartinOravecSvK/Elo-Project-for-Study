@@ -2,6 +2,13 @@
     text-align: center;
 }
 
+.question {
+    text-decoration: none;
+    text-align: center;
+    color: #000000;
+    font-size: 44px;
+}
+
 .CategoryButtons {
     display: flex;
     flex-wrap: wrap;

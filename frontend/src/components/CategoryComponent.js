@@ -11,7 +11,7 @@ function CategoryComponent({ setCategory }) {
 
     return (
         <div className='CategoryWrapper'>
-            <h1>
+            <h1 className='question'>
                 Which category best describes this type of event/experience:
             </h1>
             <div className='CategoryButtons'>
