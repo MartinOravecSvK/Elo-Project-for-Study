@@ -15,6 +15,7 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
     const [counter, setCounter] = useState(0);
     const [loser_id, setLoser_id] = useState(null);
     const [winner_id, setWinner_id] = useState(null);
+    const [polarization, setPolarization] = useState(null);
     const [category, setCategory] = useState(null);
     const [classification, setClassification] = useState(null);
     
@@ -122,6 +123,7 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
                     winner_id: finalWinnerId,
                     category: category,
                     classification: classification,
+                    polarization: polarization,
                 }),
             });
             const data = await response.json();
@@ -162,6 +164,7 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
                     counter={counter} 
                     blockSize={blockSize} 
                     worseStart={worseStart}
+                    setPolarization={setPolarization}
                 />
             ) : (
                 <p>No more events to show. Study completed!</p>

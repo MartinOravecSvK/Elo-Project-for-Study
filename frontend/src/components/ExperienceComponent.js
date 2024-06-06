@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './ExperienceComponent.css';
 
-function ExperienceComponent({ setLoser_id, setWinner_id, events, counter, blockSize, worseStart }) {
+function ExperienceComponent({ setLoser_id, setWinner_id, events, counter, blockSize, worseStart, setPolarization }) {
     const [selectedEvent, setSelectedEvent] = useState(null);
 
     const handleEventClick = (winnerEventId, loserEventId) => {
@@ -14,7 +14,10 @@ function ExperienceComponent({ setLoser_id, setWinner_id, events, counter, block
     let question = 'From the two experiences below, select the more better:';
     const shouldSwitch = (counter < blockSize && worseStart) || (counter >= blockSize && !worseStart);
     if (shouldSwitch) {
+        setPolarization('negative');
         question = 'From the two experiences below, select the more negative:';
+    } else {
+        setPolarization('positive');
     }
 
     return (
