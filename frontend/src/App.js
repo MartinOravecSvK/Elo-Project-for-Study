@@ -12,6 +12,7 @@ import FinishedStudyPage from './pages/FinishedStudyPage';
 import HeaderComponent from './components/HeaderComponent';
 
 function App() {
+    const [error, setError] = useState(null);
     const [currentPageIndex, setcurrentPageIndex] = useState(0);
     const [finishedStudy, setFinishedStudy] = useState(false);
     const [eventsNum, setEventsNum] = useState(0);
@@ -86,6 +87,11 @@ function App() {
     }
 
     return (
+        error != null ? (
+            <div>
+                Error: {error.toString()}
+            </div>
+        ) : (
         <div className="App">
             {currentPageIndex === 0 && <InstructionPage1 nextPage={nextPage} />}
             {currentPageIndex === 1 && <InstructionPage2 nextPage={nextPage} />}
@@ -103,10 +109,12 @@ function App() {
                             blockSize={blockSize} 
                             setBlockSize={setBlockSize}
                             worseStart={startWorse}
+                            setError={setError}
                         />
                     </>
             )}
         </div>
+        )
     );
 }
 
