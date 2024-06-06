@@ -11,7 +11,7 @@ function ClassificationComponent({ setClassification }) {
 
     return (
         <div className='ClassificationWrapper'>
-            <h1>
+            <h1 className='question'>
                 Would you classify this as a "Daily" or "Major" life event?
             </h1>
             <div className='ClassificationButtons'>

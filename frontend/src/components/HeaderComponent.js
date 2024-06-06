@@ -3,20 +3,24 @@ import './HeaderComponent.css';
 
 function HeaderComponent({ eventsNum, eventsDone }) {
 
-    const progressPercentage = (eventsDone / eventsNum) * 100;
+    // Calculate the progress percentage up to 2 decimal places
+    const progressPercentage = ((eventsDone / eventsNum) * 100).toFixed(2);
 
     return (
         <header className='HeaderWrapper'>
             <img
                 className='Logo'
-                src="/UoBLogo.svg"
+                src="/UoB_CMYK_24.svg"
                 alt="University of Bristol Logo"
             />
             <div className='ProgressContainer'>
-                <progress className='ProgressBar' value={progressPercentage} max="100"></progress>
-                <span>{`${eventsDone} / ${eventsNum} completed`}</span>
+                <span>{`${eventsDone} / ${eventsNum} Completed`}</span>
+                <div className='ProgressBarWrapper'>
+                    <progress className='ProgressBar' value={progressPercentage} max="100"></progress>
+                    <div className='ProgressLabel'>{`${progressPercentage}%`}</div>
+                </div>
             </div>
-            <h1 className='StudyName'>Name of the study</h1>
+            <h1 className='StudyName'>Comparing Life Experiences</h1>
         </header>
     );
 }
