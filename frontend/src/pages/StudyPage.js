@@ -45,6 +45,9 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
                     setEventsDone(data.progress.current_completed);
                     setEventsNum(data.progress.number_of_questions);
                 }
+                if (data.message === "You are no longer a participant") {
+                    setError(data.message);
+                }
             }
         } catch (error) {
             console.error('Error fetching events:', error);
