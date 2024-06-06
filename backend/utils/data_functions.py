@@ -5,7 +5,7 @@ import numpy as np
 
 # Columns to drop from the study data                          
 # 'event_valence' might be useful for better ELO rating calculation
-DROP_COLUMNS = ['fileName', 'study_number', 'participant_ID', 'event_valence', 'event_when', 'event_known']
+DROP_COLUMNS = ['fileName', 'study_number', 'participant_ID', 'event_valence', 'event_when', 'event_known', 'Use?']
 
 # Additional columns for the study data (all just counters)
 categories = ['Health', 'Financial', 'Relationship', 'Bereavement', 'Work', 'Crime']
@@ -16,15 +16,20 @@ classification = ['Daily', 'Major']
 def get_study_data():
     # Get the study data path
     current_dir = path.dirname(path.abspath(__file__))
-    study_data_path = path.join(current_dir, '../data/All_Studies_SigEvent_details.xlsx')
+    study_data_path = path.join(current_dir, '../data/All_Studies_SigEvent_details_CLEANED_23.05.2024.xlsx')
 
     # Load the study data
     study_data = read_excel(study_data_path)
+
+    # Use only rows with Use? set to Yes
+    study_data = study_data[study_data['Use?'] == 'Yes']
+
+    # Drop the unnecessary columns
     study_data.drop(columns=DROP_COLUMNS, inplace=True)
 
     # Initialize ELO rating for each sentence based on the slider_end column ((doesn't make sense)0 - (makes complete sense)100)
     slider_factor = 2.5
-    study_data['elo_rating'] = (1000 - 50 * slider_factor) + study_data['slider_end'] * slider_factor
+    study_data['elo_rating'] = ((1000 - 50 * slider_factor) + study_data['slider_end'] * slider_factor).astype(int)
 
     # Add a column to keep track of the number of times the event has been seen
     # Since, ideally, all events should be seen the same number of times
@@ -65,7 +70,9 @@ def update_elos(winner_id, loser_id, study_data):
     # Print the changes (event_IDs and ELO ratings new and old)
     # Only for testing purposes  
     print(f"Winner: {winner_id}, Old ELO: {winner_elo}, New ELO: {winner_new_elo}")
+    print(study_data.loc[study_data['event_ID'] == winner_id, 'event_details'].values[0])
     print(f"Loser: {loser_id}, Old ELO: {loser_elo}, New ELO: {loser_new_elo}")
+    print(study_data.loc[study_data['event_ID'] == loser_id, 'event_details'].values[0])
 
     # Update the ELO ratings in the study data
     study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'] = winner_new_elo
