@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import './TestPage1.css';
 
 function TestPage1({ nextPage }) {
-    const [selectedEvent0, setSelectedEvent0] = useState(null);
     const [selectedEvent1, setSelectedEvent1] = useState(null);
+    const [selectedEvent2, setSelectedEvent2] = useState(null);
 
     const checkThenNext = () => {
-        if (selectedEvent1 === 0) {
+        if (selectedEvent2 === 1) {
             // Add backend endpoint to block this user
             alert('Select sensible answer');
         } else {
@@ -25,14 +25,14 @@ function TestPage1({ nextPage }) {
             </h3>
             <div className="events">
                 <div
-                    className={`event ${selectedEvent0 === 0 ? 'selected' : ''}`}
-                    onClick={() => setSelectedEvent0(0)}
+                    className={`event ${selectedEvent1 === 1 ? 'selected' : ''}`}
+                    onClick={() => setSelectedEvent1(1)}
                 >
                     <h2>Budgeting your money wisely to sustain your future goals.</h2>
                 </div>
                 <div
-                    className={`event ${selectedEvent0 === 1 ? 'selected' : ''}`}
-                    onClick={() => setSelectedEvent0(1)}
+                    className={`event ${selectedEvent1 === 2 ? 'selected' : ''}`}
+                    onClick={() => setSelectedEvent1(2)}
                 >
                     <h2>Spending all your money impusively and getting into debt and losing your house.</h2>
                 </div>
@@ -42,19 +42,19 @@ function TestPage1({ nextPage }) {
             </h3>
             <div className="events">
                 <div
-                    className={`event ${selectedEvent1 === 0 ? 'selected' : ''}`}
-                    onClick={() => setSelectedEvent1(0)}
+                    className={`event ${selectedEvent2 === 1 ? 'selected' : ''}`}
+                    onClick={() => setSelectedEvent2(1)}
                 >
                     <h2>Feeling safe.</h2>
                 </div>
                 <div
-                    className={`event ${selectedEvent1 === 1 ? 'selected' : ''}`}
-                    onClick={() => setSelectedEvent1(1)}
+                    className={`event ${selectedEvent2 === 2 ? 'selected' : ''}`}
+                    onClick={() => setSelectedEvent2(2)}
                 >
                     <h2>Feeling unsafe and in danger.</h2>
                 </div>
             </div>
-            <button onClick={checkThenNext} className='NextButton'>Next</button>
+            {selectedEvent1 && selectedEvent2 && <button onClick={checkThenNext} className='NextButton'>Next</button>}
         </div>
     );
 }

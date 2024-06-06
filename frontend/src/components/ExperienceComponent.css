@@ -2,6 +2,13 @@
     text-align: center;
 }
 
+.question {
+    text-decoration: none;
+    text-align: center;
+    color: #000000;
+    font-size: 44px;
+}
+
 .events {
     display: flex;
     justify-content: center;
@@ -24,6 +31,9 @@
 }
 
 .event h2 {
+    text-decoration: none;
+    color : #000000;
+    font-size: 28px;
     margin: 0;
 }
 

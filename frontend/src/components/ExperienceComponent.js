@@ -19,7 +19,7 @@ function ExperienceComponent({ setLoser_id, setWinner_id, events, counter, block
 
     return (
         <div className='ExperienceWrapper'>
-            <h1>
+            <h1 className='question'>
                 {question}
             </h1>
             <div className="events">
