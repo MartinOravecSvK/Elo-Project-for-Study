@@ -19,7 +19,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 150px; /* Adjust the height as needed */
+    min-height: 150px; 
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 

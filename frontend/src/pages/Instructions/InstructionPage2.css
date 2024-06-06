@@ -1,3 +1,28 @@
+h1 {
+    font-size: 46px;
+    margin-bottom: 20px;
+    color: #007bff;
+    font-weight: bold;
+}
+
+h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+    color: #000000;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+p {
+    font-size: 26px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.InstructionWrapper {
+    text-align: center;
+}
+
 .NextButton {
     position: fixed;
     bottom: 20px;
