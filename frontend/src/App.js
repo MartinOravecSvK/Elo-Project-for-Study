@@ -95,8 +95,8 @@ function App() {
         <div className="App">
             {currentPageIndex === 0 && <InstructionPage1 nextPage={nextPage} />}
             {currentPageIndex === 1 && <InstructionPage2 nextPage={nextPage} />}
-            {currentPageIndex === 2 && <TestPage1 nextPage={nextPage} />}
-            {currentPageIndex === 3 && <TestPage2 nextPage={nextPage} />}
+            {currentPageIndex === 2 && <TestPage1 nextPage={nextPage} userId={localStorage.getItem('user_id')} setError={setError} />}
+            {currentPageIndex === 3 && <TestPage2 nextPage={nextPage} userId={localStorage.getItem('user_id')} setError={setError} />}
             {currentPageIndex > 3 && (
                 finishedStudy ? 
                     <FinishedStudyPage /> : 
