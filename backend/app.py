@@ -21,7 +21,6 @@ user_progress = {}
 
 # TODO:
 # - Change route names
-# - Maybe in the post also add requirement to add the loser ID for sanity check
 # - Test limits
 
 # - Scenario rather than experience
