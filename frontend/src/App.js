@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
+
+import InstructionPage1 from './pages/Instructions/InstructionPage1';
+import InstructionPage2 from './pages/Instructions/InstructionPage2';
+import TestPage1 from './pages/Instructions/TestPage1';
+import TestPage2 from './pages/Instructions/TestPage2';
+
 import StudyPage from './pages/StudyPage';
 import FinishedStudyPage from './pages/FinishedStudyPage';
 
 import HeaderComponent from './components/HeaderComponent';
 
 function App() {
+    const [currentPageIndex, setcurrentPageIndex] = useState(0);
     const [finishedStudy, setFinishedStudy] = useState(false);
     const [eventsNum, setEventsNum] = useState(0);
     const [eventsDone, setEventsDone] = useState(0);
@@ -74,20 +81,31 @@ function App() {
         }
     }
 
+    const nextPage = () => {
+        setcurrentPageIndex((prevIndex) => prevIndex + 1);
+    }
+
     return (
         <div className="App">
-            <HeaderComponent eventsNum={eventsNum} eventsDone={eventsDone} />
-            {finishedStudy ? 
-                <FinishedStudyPage /> : 
-                <StudyPage 
-                    setFinishedStudy={setFinishedStudy} 
-                    setEventsNum={setEventsNum} 
-                    setEventsDone={setEventsDone}  
-                    blockSize={blockSize} 
-                    setBlockSize={setBlockSize}
-                    worseStart={startWorse}
-                />
-            }
+            {currentPageIndex === 0 && <InstructionPage1 nextPage={nextPage} />}
+            {currentPageIndex === 1 && <InstructionPage2 nextPage={nextPage} />}
+            {currentPageIndex === 2 && <TestPage1 nextPage={nextPage} />}
+            {currentPageIndex === 3 && <TestPage2 nextPage={nextPage} />}
+            {currentPageIndex > 3 && (
+                finishedStudy ? 
+                    <FinishedStudyPage /> : 
+                    <>
+                        <HeaderComponent eventsNum={eventsNum} eventsDone={eventsDone} />
+                        <StudyPage 
+                            setFinishedStudy={setFinishedStudy} 
+                            setEventsNum={setEventsNum} 
+                            setEventsDone={setEventsDone}  
+                            blockSize={blockSize} 
+                            setBlockSize={setBlockSize}
+                            worseStart={startWorse}
+                        />
+                    </>
+            )}
         </div>
     );
 }

@@ -1,0 +1,22 @@
+.NextButton {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 30px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #007bff;
+    border: 3px solid #0056b3;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+    z-index: 1000; /* Ensure it is above other elements */
+}
+
+.NextButton:hover {
+    background-color: #0056b3;
+    border-color: #003f7f;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}
