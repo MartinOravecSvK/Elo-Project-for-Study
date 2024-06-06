@@ -9,7 +9,7 @@ app.secret_key = 'your_secret_key'
 # Ideally divisible by two due to block size
 number_of_questions = 4
 # Change this to True if you are not collecting information on the categories and classifications of the events
-omit_other = False
+omit_other = True
 
 # Load the study data as pandas DataFrame
 study_data = get_study_data()
@@ -177,6 +177,8 @@ def submit_answer():
     if user_id not in user_answers:
         user_answers[user_id] = []
     
+    # Keep in mind with this data collection, the winner and loser are irregardless of the polarity
+    # So winner is always the better event and loser is always the worse event
     if not omit_other:
         user_answers[user_id].append([winner_id, loser_id, polarity, category, classification])
     else:

@@ -6,11 +6,10 @@ import CategoryComponent from '../components/CategoryComponent';
 import ClassificationComponent from '../components/ClassificationComponent';
 
 // TODO:
-// - Make it easy to toggle Categories
 // - Refactor the code to make it more readable
 
 function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, blockSize, setBlockSize, setError }) {
-    const otherFields = true;
+    const otherFields = false;
     const [events, setEvents] = useState({});
     const [counter, setCounter] = useState(0);
     const [loser_id, setLoser_id] = useState(null);
@@ -169,13 +168,13 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
             ) : (
                 <p>No more events to show. Study completed!</p>
             )}
-            {winner_id != null && loser_id != null && (
+            {otherFields && winner_id != null && loser_id != null && (
                 <CategoryComponent setCategory={setCategory} />
             )}
-            {category != null && (
+            {otherFields && category != null && (
                 <ClassificationComponent setClassification={setClassification} />
             )}
-            {classification != null && (
+            {(classification != null || (!otherFields && winner_id != null && loser_id != null)) && (
                 <button onClick={submitAnswer} className='NextButton'>Next</button>
             )}
         </div>
