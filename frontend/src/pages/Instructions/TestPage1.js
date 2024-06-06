@@ -1,14 +1,31 @@
 import React, { useState } from 'react';
 import './TestPage1.css';
 
-function TestPage1({ nextPage }) {
+function TestPage1({ nextPage, userId, setError }) {
     const [selectedEvent1, setSelectedEvent1] = useState(null);
     const [selectedEvent2, setSelectedEvent2] = useState(null);
 
-    const checkThenNext = () => {
+    const checkThenNext = async () => {
         if (selectedEvent2 === 1) {
             // Add backend endpoint to block this user
             alert('Select sensible answer');
+
+            try {
+                const response = await fetch('http://localhost:5000/block_user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: userId,
+                    }),
+                });
+                const data = await response.json();
+                setError(data.message);
+            } catch (error) {
+                console.error('Error blocking user:', error);
+            }
+
         } else {
             nextPage();
         }
