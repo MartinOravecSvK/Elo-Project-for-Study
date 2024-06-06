@@ -10,9 +10,13 @@ function App() {
     const [eventsNum, setEventsNum] = useState(0);
     const [eventsDone, setEventsDone] = useState(0);
 
-    // Sets the first block of questions to be for users to select worse scebario
-    const startWorse = Math.random() >= 0.5;
+    const [startWorse, setStartWorse] = useState(false);
     const [blockSize, setBlockSize] = useState(0);
+    
+    // Sets the first block of questions to be for users to select worse scebario
+    useEffect(() => {
+        setStartWorse(Math.random() >= 0.5);
+    }, []);
 
     // This useEffect hook handled getting the participant ID from the URL and storing it in the browser's local storage
     // The participant ID is appended to the URL by Prolific when the study is launched
@@ -79,7 +83,6 @@ function App() {
                     setFinishedStudy={setFinishedStudy} 
                     setEventsNum={setEventsNum} 
                     setEventsDone={setEventsDone}  
-                    startWorse={startWorse} 
                     blockSize={blockSize} 
                     setBlockSize={setBlockSize}
                     worseStart={startWorse}
