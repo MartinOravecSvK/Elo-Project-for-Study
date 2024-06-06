@@ -97,6 +97,7 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
             }
         }
 
+        console.log(counter, blockSize, worseStart)
         const shouldSwitch = (counter < blockSize && worseStart) || (counter >= blockSize && !worseStart);
         const finalLoserId = shouldSwitch ? winner_id : loser_id;
         const finalWinnerId = shouldSwitch ? loser_id : winner_id;

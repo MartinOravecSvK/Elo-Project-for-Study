@@ -10,20 +10,15 @@ function ExperienceComponent({ setLoser_id, setWinner_id, events, counter, block
         setWinner_id(winnerEventId);
     };
 
+    console.log("ExperienceComponent: ", counter, blockSize, worseStart)
     let question = 'From the two experiences below, select the less/more better:';
-    if (counter < blockSize && worseStart) {
+    const shouldSwitch = (counter < blockSize && worseStart) || (counter >= blockSize && !worseStart);
+    if (shouldSwitch) {
         question = 'From the two experiences below, select the worst/more negative:';
-    } else if (counter > blockSize && !worseStart) {
-        question = 'From the two experiences below, select the worst/more negative:';
-    } else if (counter > blockSize && worseStart) {
-        question = 'From the two experiences below, select the less/more better:';
     }
 
     return (
         <div className='ExperienceWrapper'>
-            {/* <h1>
-                From the two experiences below, select the worst/more negative:
-            </h1> */}
             <h1>
                 {question}
             </h1>

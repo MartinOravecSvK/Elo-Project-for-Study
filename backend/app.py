@@ -29,6 +29,7 @@ user_progress = {}
 # - Better and Worse Questions
 # - Add no same pairs for user check
 # - Check prolific stuff
+# - Capture the question (better or worse Q)
 
 # Local function that does some user_id checks and some puts the events into correct format
 # It runs the get_next_events_based_on_elo function which is the main algorithm for selecting the next events
