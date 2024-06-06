@@ -11,10 +11,10 @@ function ExperienceComponent({ setLoser_id, setWinner_id, events, counter, block
     };
 
     console.log("ExperienceComponent: ", counter, blockSize, worseStart)
-    let question = 'From the two experiences below, select the less/more better:';
+    let question = 'From the two experiences below, select the more better:';
     const shouldSwitch = (counter < blockSize && worseStart) || (counter >= blockSize && !worseStart);
     if (shouldSwitch) {
-        question = 'From the two experiences below, select the worst/more negative:';
+        question = 'From the two experiences below, select the more negative:';
     }
 
     return (
