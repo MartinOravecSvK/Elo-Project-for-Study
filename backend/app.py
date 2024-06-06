@@ -146,6 +146,13 @@ def submit_answer():
     loser_id = int(request.json.get('loser_id'))
     winner_id = int(request.json.get('winner_id'))
 
+    polarity = request.json.get('polarization')
+
+    if not polarity:
+        return jsonify({"error": "Polarity not provided"}), 400
+
+    print("Polarity: ", polarity)
+
     if not winner_id or not loser_id:
         return jsonify({"error": "Answer not provided"}), 400
     
@@ -171,9 +178,9 @@ def submit_answer():
         user_answers[user_id] = []
     
     if not omit_other:
-        user_answers[user_id].append([winner_id, loser_id, category, classification])
+        user_answers[user_id].append([winner_id, loser_id, polarity, category, classification])
     else:
-        user_answers[user_id].append([winner_id, loser_id])
+        user_answers[user_id].append([winner_id, loser_id, polarity])
 
     # For testing purposes print all the categories and classifications
     # print(study_data.loc[study_data['event_ID'] == winner_id, ['Health', 'Financial', 'Relationship', 'Bereavement', 'Work', 'Crime', 'Daily', 'Major']])
