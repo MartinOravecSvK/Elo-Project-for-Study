@@ -9,7 +9,7 @@ import ClassificationComponent from '../components/ClassificationComponent';
 // - Make it easy to toggle Categories
 // - Refactor the code to make it more readable
 
-function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, blockSize, setBlockSize }) {
+function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, blockSize, setBlockSize, setError }) {
     const otherFields = true;
     const [events, setEvents] = useState({});
     const [counter, setCounter] = useState(0);
@@ -48,6 +48,7 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
             }
         } catch (error) {
             console.error('Error fetching events:', error);
+            setError(error);
         }
     };
 
