@@ -1,9 +1,10 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from utils.data_functions import get_study_data, update_elos, get_next_events_based_on_elo
 
 # Create a Flask app
-app = Flask(__name__)
+# app = Flask(__name__)
+app = Flask(__name__, static_folder='../frontend/build', static_url_path='')
 CORS(app)
 app.secret_key = 'your_secret_key'
 # Ideally divisible by two due to block size
@@ -27,14 +28,10 @@ user_answers = {}
 blacklist = []
 
 # TODO:
-# - Change route names
 # - Test limits
 
-# - Get the questions polarity in the response
-# - Better and Worse Questions
 # - Add no same pairs for user check
 # - Check prolific stuff
-# - Capture the question (better or worse Q)
 
 # Local function that does some user_id checks and some puts the events into correct format
 # It runs the get_next_events_based_on_elo function which is the main algorithm for selecting the next events
@@ -241,6 +238,10 @@ def home():
 
     with app.test_request_context('/next', method='GET', query_string={'user_id': user_id}):
         return get_next()
+    
+@app.route('/<path:path>', methods=['GET'])
+def serve_static(path):
+    return send_from_directory(app.static_folder, path)
 
 if __name__ == '__main__':
     app.run(debug=True)
