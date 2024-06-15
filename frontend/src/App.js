@@ -59,7 +59,7 @@ function App() {
         // Generate a random 8-character user ID
         const user_id = Math.random().toString(36).substr(2, 8);
         try {
-            const response = await fetch('http://localhost:5000/check_user_id', {
+            const response = await fetch('http://localhost:8000/check_user_id', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
