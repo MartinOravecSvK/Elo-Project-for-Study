@@ -30,7 +30,7 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
 
     const fetchEvents = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/next?user_id=${userId}`);
+            const response = await fetch(`http://localhost:8000/next?user_id=${userId}`);
             const data = await response.json();
             if (data.events) {
                 setEvents(data.events);
@@ -111,7 +111,7 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
         
         try {
 
-            const response = await fetch('http://localhost:5000/submit', {
+            const response = await fetch('http://localhost:8000/submit', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

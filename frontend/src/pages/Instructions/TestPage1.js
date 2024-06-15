@@ -8,7 +8,7 @@ function TestPage1({ nextPage, userId, setError }) {
     const checkThenNext = async () => {
         if (selectedEvent2 === 1) {
             try {
-                const response = await fetch('http://localhost:5000/block_user', {
+                const response = await fetch('http://localhost:8000/block_user', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

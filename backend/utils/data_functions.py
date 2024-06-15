@@ -19,7 +19,7 @@ def get_study_data():
     study_data_path = path.join(current_dir, '../data/All_Studies_SigEvent_details_CLEANED_23.05.2024.xlsx')
 
     # Load the study data
-    study_data = read_excel(study_data_path)
+    study_data = read_excel(study_data_path, engine='openpyxl')
 
     # Use only rows with Use? set to Yes
     study_data = study_data[study_data['Use?'] == 'Yes']
@@ -84,6 +84,16 @@ def update_elos(winner_id, loser_id, study_data):
 # Update the instability of the event
 def update_instability():
     pass
+
+def get_next_events(user_id, study_data):
+    next_events = get_next_events_based_on_elo(study_data)
+
+    next_events_dict = {}
+    for i, next_event in enumerate(next_events):
+        next_events_dict[f"event{i}_details"] = str(next_event['event_details'])
+        next_events_dict[f"event{i}_ID"] = int(next_event['event_ID'])
+
+    return next_events_dict
 
 # Returns list of 2 DataFrame rows with event details
 def get_next_events_based_on_elo(study_data, window_size=10):
