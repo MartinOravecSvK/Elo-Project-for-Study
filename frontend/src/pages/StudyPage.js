@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import './StudyPage.css';
+import config from '../config';
 
 import ExperienceComponent from '../components/ExperienceComponent';
 import CategoryComponent from '../components/CategoryComponent';
 import ClassificationComponent from '../components/ClassificationComponent';
 
-// TODO:
-// - Refactor the code to make it more readable
-
-function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, blockSize, setBlockSize, setError }) {
+function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, blockSize, setBlockSize, setError, counter, setCounter }) {
     const otherFields = false;
     const [events, setEvents] = useState({});
-    const [counter, setCounter] = useState(0);
+    // const [counter, setCounter] = useState(0);
     const [loser_id, setLoser_id] = useState(null);
     const [winner_id, setWinner_id] = useState(null);
     const [polarization, setPolarization] = useState(null);
@@ -30,7 +28,7 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
 
     const fetchEvents = async () => {
         try {
-            const response = await fetch(`http://localhost:8000/next?user_id=${userId}`);
+            const response = await fetch(`${config.apiBaseUrl}/next?user_id=${userId}`);
             const data = await response.json();
             if (data.events) {
                 setEvents(data.events);
@@ -110,8 +108,7 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
         console.log('Counter: ', counter)
         
         try {
-
-            const response = await fetch('http://localhost:8000/submit', {
+            const response = await fetch(`${config.apiBaseUrl}/submit`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -152,6 +149,7 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
         setCategory(null);
         setClassification(null);
     };
+    console.log('Polarization: ', polarization)
 
     return (
         <div className='StudyPage'>

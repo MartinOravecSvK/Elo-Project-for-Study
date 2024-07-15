@@ -1,27 +1,30 @@
 import React, { useState } from 'react';
+import config from '../../config';
 import './TestPage1.css';
 
-function TestPage1({ nextPage, userId, setError }) {
+function TestPage1({ nextPage, userId, setError, setFailedAttention }) {
     const [selectedEvent1, setSelectedEvent1] = useState(null);
     const [selectedEvent2, setSelectedEvent2] = useState(null);
 
     const checkThenNext = async () => {
         if (selectedEvent2 === 1) {
-            try {
-                const response = await fetch('http://localhost:8000/block_user', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        user_id: userId,
-                    }),
-                });
-                const data = await response.json();
-                setError(data.message);
-            } catch (error) {
-                console.error('Error blocking user:', error);
-            }
+            setFailedAttention(true);
+            nextPage();
+            // try {
+            //     const response = await fetch(`${config.apiBaseUrl}/block_user`, {
+            //         method: 'POST',
+            //         headers: {
+            //             'Content-Type': 'application/json',
+            //         },
+            //         body: JSON.stringify({
+            //             user_id: userId,
+            //         }),
+            //     });
+            //     const data = await response.json();
+            //     setError(data.message);
+            // } catch (error) {
+            //     console.error('Error blocking user:', error);
+            // }
         } else {
             nextPage();
         }

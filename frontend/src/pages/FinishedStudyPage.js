@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
+import UoB_CMYK_24 from '../images/UoB_CMYK_24.svg';
 import './FinishedStudyPage.css'; 
 
 // TODO:
@@ -38,7 +39,7 @@ function FinishedStudyPage() {
                     <div style={{ width: '100%' }}>
                         <img
                             style={{ display: 'block', margin: '0 auto', width: '200px', height: 'auto' }}
-                            src="/UoB_CMYK_24.svg"
+                            src={UoB_CMYK_24}
                             alt="University of Bristol Logo"
                         />
                     </div>
@@ -59,7 +60,7 @@ function FinishedStudyPage() {
                     </b></p>
                     <p>
                         <b>
-                            <a href={`https://app.prolific.com/submissions/complete?cc=${completion_code}&participant_id=${localStorage.getItem('participant_id')}`} >
+                            <a href={`https://app.prolific.com/submissions/complete?cc=${completion_code}`} >
                                 Click here to finish study
                             </a>
                         </b>
