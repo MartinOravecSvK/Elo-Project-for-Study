@@ -1,4 +1,5 @@
 import React from 'react';
+import UoB_CMYK_24 from '../images/UoB_CMYK_24.svg';
 import './HeaderComponent.css';
 
 function HeaderComponent({ eventsNum, eventsDone }) {
@@ -10,7 +11,7 @@ function HeaderComponent({ eventsNum, eventsDone }) {
         <header className='HeaderWrapper'>
             <img
                 className='Logo'
-                src="/UoB_CMYK_24.svg"
+                src={UoB_CMYK_24}
                 alt="University of Bristol Logo"
             />
             <div className='ProgressContainer'>

@@ -5,6 +5,14 @@ h1 {
     font-weight: bold;
 }
 
+.instrucion-header {
+    font-size: 32px;
+    margin-bottom: 20px;
+    color: #000000;
+    font-weight: bold;
+    text-decoration: underline !important;
+}
+
 h3 {
     font-size: 36px;
     margin-bottom: 20px;
