@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import config from './config';
 
@@ -6,6 +6,7 @@ import InstructionPage1 from './pages/Instructions/InstructionPage1';
 import InstructionPage2 from './pages/Instructions/InstructionPage2';
 import TestPage1 from './pages/Instructions/TestPage1';
 import TestPage2 from './pages/Instructions/TestPage2';
+import ParticipantInformationPage from './pages/ParticipationInformationPage';
 
 import StudyPage from './pages/StudyPage';
 import FinishedStudyPage from './pages/FinishedStudyPage';
@@ -24,19 +25,30 @@ function App() {
     const [counter, setCounter] = useState(0);
     
     const [attention, setAttention] = useState(true);
-    const [startWorse, setStartWorse] = useState(false);
+    const [startWorse, setStartWorse] = useState(null);
     const [blockSize, setBlockSize] = useState(0);
     const [attentionWord, setAttentionWord] = useState(null);
 
     const [failedAttention, setFailedAttention] = useState(false);
     const [blocked, setBlocked] = useState(false);
     
+    useEffect(() => {
+        // Check the current page index from local storage
+        const storedPageIndex = localStorage.getItem('currentPageIndex');
+        if (storedPageIndex !== null) {
+            setcurrentPageIndex(parseInt(storedPageIndex));
+        }
+    }, []);
+
     // Sets the first block of questions to be for users to select worse scebario
     useEffect(() => {
+        if (startWorse !== null) {
+            return;
+        }
         const isStartWorse = Math.random() >= 0.5;
         setStartWorse(isStartWorse);
         setAttentionWord(isStartWorse ? "worse" : "better");
-    }, []);
+    }, [startWorse]);
 
     // This useEffect hook handled getting the participant ID from the URL and storing it in the browser's local storage
     // The participant ID is appended to the URL by Prolific when the study is launched
@@ -56,7 +68,7 @@ function App() {
         }
     }, []);
 
-    const generateUserId = async () => {
+    const generateUserId = useCallback(async () => {
         // Generate a random 8-character user ID
         const user_id = Math.random().toString(36).substr(2, 8);
         try {
@@ -82,7 +94,7 @@ function App() {
         } catch (error) {
             console.error();
         }
-    }
+    }, []);
 
     // This useEffect hook is used to generate a random 8-character user ID and store it in the browser's local storage
     // This will be changed later to make sure there are no clashing user IDs
@@ -94,7 +106,7 @@ function App() {
         } else {
             console.log('User ID:', localStorage.getItem('user_id'));
         }
-    }, []);
+    }, [generateUserId]);
 
     useEffect(() => {
         console.log('User ID:', localStorage.getItem('user_id'), 'Study finished:', finishedStudy);
@@ -104,14 +116,14 @@ function App() {
         if (eventsDone === blockSize) {
             setAttention(true);
         }
-    }, [eventsDone]);
+    }, [eventsDone, blockSize]);
 
     useEffect(() => {
         if (counter === blockSize - 1) {
             setAttentionWord(startWorse ? "better" : "worse");
         }
         console.log('Attention word:', attentionWord);
-    }, [counter]);
+    }, [counter, blockSize, startWorse, attentionWord]);
 
     const blockUser = async (userId) => {
         try {
@@ -139,10 +151,14 @@ function App() {
                 setBlocked(true);
             }
         }
-    }, [currentPageIndex]);
+    }, [currentPageIndex, failedAttention]);
 
     const nextPage = () => {
-        setcurrentPageIndex((prevIndex) => prevIndex + 1);
+        setcurrentPageIndex((prevIndex) => {
+            const newIndex = prevIndex + 1;
+            localStorage.setItem('currentPageIndex', newIndex.toString());
+            return newIndex;
+        });
     }
 
     const handleContinue = () => {
@@ -166,7 +182,8 @@ function App() {
             {currentPageIndex === 1 && <InstructionPage2 nextPage={nextPage} />}
             {currentPageIndex === 2 && <TestPage1 nextPage={nextPage} userId={localStorage.getItem('user_id')} setError={setError} setFailedAttention={setFailedAttention} />}
             {currentPageIndex === 3 && <TestPage2 nextPage={nextPage} userId={localStorage.getItem('user_id')} setError={setError} setFailedAttention={setFailedAttention} />}
-            {currentPageIndex > 3 && (
+            {currentPageIndex === 4 && <ParticipantInformationPage nextPage={nextPage} />}
+            {currentPageIndex > 4 && (
                 finishedStudy ? 
                     <FinishedStudyPage /> :
                     attention ? 
