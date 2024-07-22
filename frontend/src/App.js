@@ -16,6 +16,7 @@ import HeaderComponent from './components/HeaderComponent';
 
 function App() {
     const [error, setError] = useState(null);
+    const [userId, setUserId] = useState(localStorage.getItem('user_id') || '');
     const [currentPageIndex, setcurrentPageIndex] = useState(0);
     const [finishedStudy, setFinishedStudy] = useState(false);
     const [eventsNum, setEventsNum] = useState(0);
@@ -54,6 +55,34 @@ function App() {
             // console.error('Participant ID not found in URL');
         }
     }, []);
+
+    const generateUserId = async () => {
+        // Generate a random 8-character user ID
+        const user_id = Math.random().toString(36).substr(2, 8);
+        try {
+            const response = await fetch(`${config.apiBaseUrl}/check_user_id`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: user_id,
+                }),
+            });
+            const data = await response.json();
+            if (data.message === 'User ID already exists') {
+                generateUserId();
+            } else {
+                localStorage.setItem('user_id', user_id);
+                setUserId(user_id);
+                console.log('Data: ', data);
+                setBlockSize(Math.trunc(data.questions_num/2));
+                setEventsNum(data.questions_num);
+            }
+        } catch (error) {
+            console.error();
+        }
+    }
 
     // This useEffect hook is used to generate a random 8-character user ID and store it in the browser's local storage
     // This will be changed later to make sure there are no clashing user IDs
@@ -112,33 +141,6 @@ function App() {
         }
     }, [currentPageIndex]);
 
-    const generateUserId = async () => {
-        // Generate a random 8-character user ID
-        const user_id = Math.random().toString(36).substr(2, 8);
-        try {
-            const response = await fetch(`${config.apiBaseUrl}/check_user_id`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    user_id: user_id,
-                }),
-            });
-            const data = await response.json();
-            if (data.message === 'User ID already exists') {
-                generateUserId();
-            } else {
-                localStorage.setItem('user_id', user_id);
-                console.log('Data: ', data);
-                setBlockSize(Math.trunc(data.questions_num/2));
-                setEventsNum(data.questions_num);
-            }
-        } catch (error) {
-            console.error();
-        }
-    }
-
     const nextPage = () => {
         setcurrentPageIndex((prevIndex) => prevIndex + 1);
     }
@@ -181,6 +183,7 @@ function App() {
                                 setError={setError}
                                 counter={counter}
                                 setCounter={setCounter}
+                                userId={userId}
                             />
                         </>
             )}

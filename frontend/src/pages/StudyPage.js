@@ -6,7 +6,7 @@ import ExperienceComponent from '../components/ExperienceComponent';
 import CategoryComponent from '../components/CategoryComponent';
 import ClassificationComponent from '../components/ClassificationComponent';
 
-function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, blockSize, setBlockSize, setError, counter, setCounter }) {
+function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, blockSize, setBlockSize, setError, counter, setCounter, userId }) {
     const otherFields = false;
     const [events, setEvents] = useState({});
     // const [counter, setCounter] = useState(0);
@@ -17,11 +17,11 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
     const [classification, setClassification] = useState(null);
     
     // Replace 'some-unique-user-id' with a unique identifier for the user (generate some and store it in browser's local storage)
-    const userId = localStorage.getItem('user_id') || null;
+    // const userId = localStorage.getItem('user_id') || null;
     
     useEffect(() => {
         if (!userId) {
-            console.error('User ID not found in local storage');
+            console.error('User ID not found');
         }
         fetchEvents();
     }, []);
