@@ -14,6 +14,9 @@ generate_random_user_id = lambda: ''.join(random.choices('abcdefghijklmnopqrstuv
 
 user_bp = Blueprint('user', __name__)
 
+# Sheduler to save data 
+# ______________________________________________________________________________________________________________________
+
 app = Flask(__name__)
 scheduler = APScheduler()
 
@@ -30,6 +33,17 @@ def save_data():
         study_data.to_csv(study_data_file)
 
 scheduler.add_job(id='Save Data', func=save_data, trigger='interval', seconds=10) 
+
+def start_scheduler():
+    print('Starting scheduler')
+    if not scheduler.running:
+        scheduler.start()
+
+def shutdown_scheduler():
+    print('Shutting down scheduler')
+    if scheduler.running:
+        scheduler.shutdown(wait=False)
+# ______________________________________________________________________________________________________________________
 
 @user_bp.route('/next', methods=['GET'])
 def get_next():
