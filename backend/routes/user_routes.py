@@ -8,6 +8,10 @@ import json
 from data.global_data import user_progress, user_answers, blacklist, number_of_questions, omit_other, study_data
 from locks.locks import user_progress_lock, user_answers_lock, blacklist_lock, study_data_lock
 
+import random
+generate_random_user_id = lambda: ''.join(random.choices('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', k=10))
+
+
 user_bp = Blueprint('user', __name__)
 
 app = Flask(__name__)
@@ -179,6 +183,18 @@ def check_generated_user_id():
             return jsonify({"message": "User ID already exists"}), 200
     
     return jsonify({"message": "User ID is valid", "questions_num": number_of_questions}), 200
+
+@user_bp.route('/generate_user_id', methods=['POST'])
+def generate_user_id():
+    # Generate a random user ID with 9 random characters
+    user_id = generate_random_user_id()
+    with user_progress_lock:
+        while user_id in user_progress:
+            user_id = generate_random_user_id()
+        # Add the user ID to the user_progress dictionary
+        user_progress[user_id] = [0, [], time.time()]
+
+    return jsonify({"user_id": user_id, "questions_num": number_of_questions}), 200
 
 @user_bp.route('/block_user', methods=['POST'])
 def block_user():
