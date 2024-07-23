@@ -4,8 +4,9 @@ from flask_apscheduler import APScheduler
 from utils.data_functions import get_next_events, update_elos, get_study_data, get_next_events_test
 import time
 import json
+import pandas as pd
 
-from data.global_data import user_progress, user_answers, blacklist, number_of_questions, omit_other, study_data
+from data.global_data import user_progress, user_answers, blacklist, number_of_questions, omit_other, study_data, elo_history
 from locks.locks import user_progress_lock, user_answers_lock, blacklist_lock, study_data_lock
 
 import random
@@ -22,15 +23,22 @@ scheduler = APScheduler()
 
 user_bp = Blueprint('user', __name__)
 
+def custom_encoder(obj):
+    if isinstance(obj, pd.Series):
+        return obj.tolist()
+    return obj.to_dict() if hasattr(obj, 'to_dict') else str(obj)
+
 def save_data():
     user_answers_file = 'output/user_answers.json'
     with user_answers_lock:
         with open(user_answers_file, 'w') as f:
             json.dump(user_answers, f)
-
-    study_data_file = 'output/study_data.csv'
+    study_data_file = 'output/study_data.json'
     with study_data_lock:
-        study_data.to_csv(study_data_file)
+        with open(study_data_file, 'w') as f:
+            json.dump(study_data.to_dict(orient='records'), f, default=custom_encoder)
+        with open('output/elo_history.json', 'w') as f:
+            json.dump(elo_history, f)
 
 scheduler.add_job(id='Save Data', func=save_data, trigger='interval', seconds=10) 
 
@@ -146,7 +154,7 @@ def submit_answer():
             study_data.loc[study_data['event_ID'] == winner_id, classification] += 1
     
     with study_data_lock:
-        update_elos(winner_id, loser_id, study_data)
+        update_elos(winner_id, loser_id, study_data, elo_history)
     
     with user_answers_lock:
         # Add the user's answer to the user_answers dictionary if it doesn't exist

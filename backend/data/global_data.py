@@ -1,7 +1,8 @@
 import time
-from utils.data_functions import get_study_data, get_user_answers
+from utils.data_functions import get_study_data, get_user_answers, get_historical_data
 
 study_data = get_study_data()
+elo_history = get_historical_data(study_data=study_data)
 number_of_questions = 20
 omit_other = True
 

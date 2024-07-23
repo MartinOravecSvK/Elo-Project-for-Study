@@ -1,4 +1,5 @@
 from pandas import read_excel, read_csv
+import pandas as pd
 from os import path
 import random
 import numpy as np
@@ -16,10 +17,12 @@ classification = ['Daily', 'Major']
 # Columns: ['event_details', 'event_ID', 'elo_rating']
 def get_study_data():
     study_data_file = 'output/study_data.csv'
-    try:
-        study_data = read_csv(study_data_file)
-    except FileNotFoundError:
-
+    # try:
+        # study_data = read_csv(study_data_file)
+    if path.exists(study_data_file):
+        study_data = pd.read_json(study_data_file, orient='split')
+    # except FileNotFoundError:
+    else:
         # Get the study data path
         current_dir = path.dirname(path.abspath(__file__))
         study_data_path = path.join(current_dir, '../data/All_Studies_SigEvent_details_CLEANED_23.05.2024.xlsx')
@@ -35,7 +38,8 @@ def get_study_data():
 
         # Initialize ELO rating for each sentence based on the slider_end column ((doesn't make sense)0 - (makes complete sense)100)
         slider_factor = 2.5
-        study_data['elo_rating'] = ((1000 - 50 * slider_factor) + study_data['slider_end'] * slider_factor).astype(int)
+        initial_elo = ((1000 - 50 * slider_factor) + study_data['slider_end'] * slider_factor).astype(int)
+        study_data['elo_rating'] = initial_elo
 
         # Add a column to keep track of the number of times the event has been seen
         # Since, ideally, all events should be seen the same number of times
@@ -59,6 +63,22 @@ def get_study_data():
     
     return study_data
 
+def get_historical_data(study_data):
+    elo_history_file = 'output/elo_history.json'
+    if path.exists(elo_history_file):
+        with open(elo_history_file, 'r') as f:
+            elo_history = json.load(f)
+    else:
+        elo_history = {}
+
+    # Initialize ELO history for each event if needed
+    for index, row in study_data.iterrows():
+        event_id = row['event_ID']
+        if event_id not in elo_history:
+            elo_history[event_id] = [row['elo_rating']]
+
+    return elo_history
+
 # Gets the saved user progress or initializes it
 def get_user_answers():
     user_answers_file = 'output/user_answers.json'
@@ -71,36 +91,72 @@ def get_user_answers():
     return user_answers
 
 # Just a simple function to update the ELO ratings
-def update_elos(winner_id, loser_id, study_data):
-    # Get the ELO ratings of the winner and loser
-    winner_elo = study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'].values[0]
-    loser_elo = study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating'].values[0]
+# def update_elos(winner_id, loser_id, study_data):
+#     # Get the ELO ratings of the winner and loser
+#     # print(pd.Series.astype(study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'], int))
+#     # print(study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'].asType(int)[-1])
+#     # print(study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'])
+#     # print(type(study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating']))
+#     winner_elo = int(study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'].iloc[-1])
+#     loser_elo = int(study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating'].iloc[-1])
 
-    # Constants for the ELO rating calculation
+
+#     # Constants for the ELO rating calculation
+#     K = 32
+
+#     # Calculate the expected scores
+#     expected_winner = 1 / (1 + 10 ** ((loser_elo - winner_elo) / 400))
+#     expected_loser = 1 / (1 + 10 ** ((winner_elo - loser_elo) / 400))
+
+#     # Calculate the new ELO ratings
+#     winner_new_elo = int(winner_elo + K * (1 - expected_winner))
+#     loser_new_elo = int(loser_elo + K * (0 - expected_loser))
+    
+#     # Print the changes (event_IDs and ELO ratings new and old)
+#     # Only for testing purposes  
+#     print(f"Winner: {winner_id}, Old ELO: {winner_elo}, New ELO: {winner_new_elo}")
+#     # print(study_data.loc[study_data['event_ID'] == winner_id, 'event_details'].values[0])
+#     print(f"Loser: {loser_id}, Old ELO: {loser_elo}, New ELO: {loser_new_elo}")
+#     # print(study_data.loc[study_data['event_ID'] == loser_id, 'event_details'].values[0])
+
+#     # Update the ELO ratings in the study data
+#     study_data.at[study_data['event_ID'] == winner_id, 'elo_rating'] = study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating_history'].values[0] + [winner_new_elo]
+#     study_data.at[study_data['event_ID'] == loser_id, 'elo_rating'] = study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating_history'].values[0] + [loser_new_elo]
+
+#     # study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'].apply(lambda x: x.append(winner_new_elo))
+#     # study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating'].apply(lambda x: x.append(loser_new_elo))
+
+#     # study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'] = winner_new_elo
+#     # study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating'] = loser_new_elo
+
+#     # No need to return anything as the DataFrame is passed by reference
+#     return winner_new_elo, loser_new_elo
+
+def update_elos(winner_id, loser_id, study_data, elo_history):
+    # Get current ELO ratings
+    winner_elo = study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'].iloc[0]
+    loser_elo = study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating'].iloc[0]
+
+    # Constants for ELO rating calculation
     K = 32
 
-    # Calculate the expected scores
-    expected_winner = 1 / (1 + 10 ** ((loser_elo - winner_elo) / 400))
-    expected_loser = 1 / (1 + 10 ** ((winner_elo - loser_elo) / 400))
+    # Calculate expected scores
+    expected_winner = 1 / (1 + 10**((loser_elo - winner_elo) / 400))
+    expected_loser = 1 / (1 + 10**((winner_elo - loser_elo) / 400))
 
-    # Calculate the new ELO ratings
-    winner_new_elo = int(winner_elo + K * (1 - expected_winner))
-    loser_new_elo = int(loser_elo + K * (0 - expected_loser))
-    
-    # Print the changes (event_IDs and ELO ratings new and old)
-    # Only for testing purposes  
-    print(f"Winner: {winner_id}, Old ELO: {winner_elo}, New ELO: {winner_new_elo}")
-    # print(study_data.loc[study_data['event_ID'] == winner_id, 'event_details'].values[0])
-    print(f"Loser: {loser_id}, Old ELO: {loser_elo}, New ELO: {loser_new_elo}")
-    # print(study_data.loc[study_data['event_ID'] == loser_id, 'event_details'].values[0])
+    # Calculate new ELO ratings
+    winner_new_elo = winner_elo + int(K * (1 - expected_winner))
+    loser_new_elo = loser_elo + int(K * (0 - expected_loser))
 
-    # Update the ELO ratings in the study data
+    # Update ELO history
+    elo_history[winner_id].append(int(winner_new_elo))
+    elo_history[loser_id].append(int(loser_new_elo))
+
+    # Update current ELO in study_data
     study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'] = winner_new_elo
     study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating'] = loser_new_elo
 
-    # No need to return anything as the DataFrame is passed by reference
     return winner_new_elo, loser_new_elo
-
 
 # Update the instability of the event
 def update_instability():
