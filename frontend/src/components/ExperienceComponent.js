@@ -10,13 +10,10 @@ function ExperienceComponent({ setLoser_id, setWinner_id, events, counter, block
         setWinner_id(winnerEventId);
     };
 
-    console.log("ExperienceComponent: ", counter, blockSize, worseStart)
-    // let question = 'From the two experiences below, select the more positive:';
     let question = <span>In your opinion, which of these scenarios is <span className="highlight-better">BETTER</span></span>;
     const shouldSwitch = (counter < blockSize && worseStart) || (counter >= blockSize && !worseStart);
     if (shouldSwitch) {
         setPolarization('negative');
-        // question = 'From the two experiences below, select the more negative:';
         question = <span>In your opinion, which of these scenarios is <span className="highlight-worse">WORSE</span></span>;
     } else {
         setPolarization('positive');
