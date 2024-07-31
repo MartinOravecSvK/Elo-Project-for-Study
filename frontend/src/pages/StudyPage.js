@@ -5,25 +5,43 @@ import config from '../config';
 import ExperienceComponent from '../components/ExperienceComponent';
 import CategoryComponent from '../components/CategoryComponent';
 import ClassificationComponent from '../components/ClassificationComponent';
+import AttentionPage from './AttentionPage';
 
-function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, blockSize, setBlockSize, setError, counter, setCounter, userId }) {
+function StudyPage({ 
+    setFinishedStudy, 
+    setEventsNum, 
+    setEventsDone, 
+    worseStart, 
+    blockSize, 
+    setBlockSize, 
+    setError, 
+    counter, 
+    setCounter, 
+    userId 
+}) {
     const otherFields = false;
-    const [events, setEvents] = useState({});
-    // const [counter, setCounter] = useState(0);
+    
+    const [events, setEvents] = useState(JSON.parse(localStorage.getItem('events')) || null);
     const [loser_id, setLoser_id] = useState(null);
     const [winner_id, setWinner_id] = useState(null);
     const [polarization, setPolarization] = useState(null);
     const [category, setCategory] = useState(null);
     const [classification, setClassification] = useState(null);
+
+    const [attention1, setAttention1] = useState(localStorage.getItem('attention1') === 'true');
+    const [attention2, setAttention2] = useState(localStorage.getItem('attention2') === 'true');
     
-    // Replace 'some-unique-user-id' with a unique identifier for the user (generate some and store it in browser's local storage)
-    // const userId = localStorage.getItem('user_id') || null;
+    const attention1Word = worseStart ? "worse" : "better";
+    const attention2Word = worseStart ? "better" : "worse";
     
     useEffect(() => {
         if (!userId) {
             console.error('User ID not found');
         }
-        fetchEvents();
+        console.log(events);
+        if (!events) {
+            fetchEvents();
+        }
     }, []);
 
     const fetchEvents = async () => {
@@ -32,6 +50,7 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
             const data = await response.json();
             if (data.events) {
                 setEvents(data.events);
+                localStorage.setItem('events', JSON.stringify(data.events));
                 setEventsDone(data.progress.current_completed);
                 setEventsNum(data.progress.number_of_questions);
                 setBlockSize(Math.trunc(data.progress.number_of_questions/2));
@@ -104,8 +123,8 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
         const finalLoserId = shouldSwitch ? winner_id : loser_id;
         const finalWinnerId = shouldSwitch ? loser_id : winner_id;
 
+        localStorage.setItem('counter', counter + 1);
         setCounter(counter + 1);
-        console.log('Counter: ', counter)
         
         try {
             const response = await fetch(`${config.apiBaseUrl}/submit`, {
@@ -128,11 +147,13 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
                 console.log('New events fetched:', data.events)
                 setEventsDone(data.progress.current_completed);
                 setEventsNum(data.progress.number_of_questions);
+                localStorage.setItem('events', JSON.stringify(data.events));
             } else {    
                 console.log(data.error || data.message || 'No events found')
                 setEvents({});
                 if (data.message === 'Study completed') {
                     setFinishedStudy(true);
+                    localStorage.setItem('finishedStudy', 'true');
                     setEventsDone(data.progress.current_completed);
                     setEventsNum(data.progress.number_of_questions);
                 }
@@ -149,7 +170,24 @@ function StudyPage({ setFinishedStudy, setEventsNum, setEventsDone, worseStart, 
         setCategory(null);
         setClassification(null);
     };
-    console.log('Polarization: ', polarization)
+
+    if (!attention1) {
+        console.log('Attention word:', attention1Word, 'worseStart:', worseStart)
+        return <AttentionPage word={attention1Word} onContinue={() => {
+            setAttention1(!attention1);
+            localStorage.setItem('attention1', 'true');
+        }}/>
+    }
+
+    if (!attention2 && counter === blockSize) {
+        console.log('Counter:', counter, 'Block size:', blockSize)
+        if (!attention2) {
+            return <AttentionPage word={attention2Word} onContinue={() => {
+                setAttention2(!attention2);
+                localStorage.setItem('attention2', 'true');
+            }}/>
+        }
+    }
 
     return (
         <div className='StudyPage'>
