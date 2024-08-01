@@ -27,7 +27,7 @@ function App() {
     const [blockSize, setBlockSize] = useState(parseInt(localStorage.getItem('bloackSize')) || 0);
 
     const [failedAttention, setFailedAttention] = useState(false);
-    const [blocked, setBlocked] = useState(false);
+    const [blocked, setBlocked] = useState(localStorage.getItem('blocked') === 'true');
     
     const generateUserId = useCallback(async () => {
         // Generate a random 8-character user ID
@@ -76,6 +76,7 @@ function App() {
         catch (error) {
             console.error('Error blocking user:', error);
         }
+        localStorage.setItem('blocked', true);
     }
 
     // This useEffect hook handled getting the participant ID from the URL and storing it in the browser's local storage
@@ -130,7 +131,7 @@ function App() {
     }, [generateUserId]);
 
     useEffect(() => {
-        if (currentPageIndex > 3) {
+        if (currentPageIndex > 4) {
             if (failedAttention) {
                 blockUser(localStorage.getItem('user_id'));
                 setBlocked(true);
@@ -153,9 +154,7 @@ function App() {
         )
     }
 
-    // Check the behaviur after a user is blocked
     // Fix the wording
-    // localstorage issues with the events
 
     return (
         error != null ? (
