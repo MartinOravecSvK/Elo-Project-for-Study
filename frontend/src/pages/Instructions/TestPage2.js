@@ -10,21 +10,6 @@ function TestPage2({ nextPage, userId, setError, setFailedAttention }) {
         if (selectedEvent2 === 2) {
             setFailedAttention(true);
             nextPage();
-            // try {
-            //     const response = await fetch(`${config.apiBaseUrl}/block_user`, {
-            //         method: 'POST',
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //         },
-            //         body: JSON.stringify({
-            //             user_id: userId,
-            //         }),
-            //     });
-            //     const data = await response.json();
-            //     setError(data.message);
-            // } catch (error) {
-            //     console.error('Error blocking user:', error);
-            // }
         } else {
             nextPage();
         }
@@ -32,7 +17,6 @@ function TestPage2({ nextPage, userId, setError, setFailedAttention }) {
 
     return (
         <div className='TestPage2Wrapper'>
-            <h1>Test to check understand better/worse judgements</h1>
             <h3>
                 3. Which of these scenarios is <ins className='better'>BETTER</ins>?
             </h3>

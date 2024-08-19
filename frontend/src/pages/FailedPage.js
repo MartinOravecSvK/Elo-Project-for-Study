@@ -19,11 +19,13 @@ function FailedPage() {
                         />
                     </div>
                     <p>
-                        Sorry! Your answers to question 2 and 4 do not suggest you have paid attention to the instructions required for completing this task.
+                        Sorry! Your answers to question 2 and question 4 do not suggest that you understand the terms “better” and “worse”. This also suggests that you might not have read the questions carefully or that you are not fluent in English, both of which are required for this study.
                     </p>
+                    <p><b>
+                        Please return your submission within 7 days.
+                    </b></p>
                     <p>
-                        Please do not attempt to continue with this task as you will not be reimbursed for this study as per Prolific valid reasons for rejection:
-                        The participant objectively demonstrated clear low-effort.
+                        If the link below is not working you can return the submission from your 'Submissions page', by selecting the red circular arrow to 'Return + cancel reward'.
                     </p>
                     <p><b>
                         Please follow the link below to return your submission without penalty.

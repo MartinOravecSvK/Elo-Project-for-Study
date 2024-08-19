@@ -90,48 +90,6 @@ def get_user_answers():
 
     return user_answers
 
-# Just a simple function to update the ELO ratings
-# def update_elos(winner_id, loser_id, study_data):
-#     # Get the ELO ratings of the winner and loser
-#     # print(pd.Series.astype(study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'], int))
-#     # print(study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'].asType(int)[-1])
-#     # print(study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'])
-#     # print(type(study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating']))
-#     winner_elo = int(study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'].iloc[-1])
-#     loser_elo = int(study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating'].iloc[-1])
-
-
-#     # Constants for the ELO rating calculation
-#     K = 32
-
-#     # Calculate the expected scores
-#     expected_winner = 1 / (1 + 10 ** ((loser_elo - winner_elo) / 400))
-#     expected_loser = 1 / (1 + 10 ** ((winner_elo - loser_elo) / 400))
-
-#     # Calculate the new ELO ratings
-#     winner_new_elo = int(winner_elo + K * (1 - expected_winner))
-#     loser_new_elo = int(loser_elo + K * (0 - expected_loser))
-    
-#     # Print the changes (event_IDs and ELO ratings new and old)
-#     # Only for testing purposes  
-#     print(f"Winner: {winner_id}, Old ELO: {winner_elo}, New ELO: {winner_new_elo}")
-#     # print(study_data.loc[study_data['event_ID'] == winner_id, 'event_details'].values[0])
-#     print(f"Loser: {loser_id}, Old ELO: {loser_elo}, New ELO: {loser_new_elo}")
-#     # print(study_data.loc[study_data['event_ID'] == loser_id, 'event_details'].values[0])
-
-#     # Update the ELO ratings in the study data
-#     study_data.at[study_data['event_ID'] == winner_id, 'elo_rating'] = study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating_history'].values[0] + [winner_new_elo]
-#     study_data.at[study_data['event_ID'] == loser_id, 'elo_rating'] = study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating_history'].values[0] + [loser_new_elo]
-
-#     # study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'].apply(lambda x: x.append(winner_new_elo))
-#     # study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating'].apply(lambda x: x.append(loser_new_elo))
-
-#     # study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'] = winner_new_elo
-#     # study_data.loc[study_data['event_ID'] == loser_id, 'elo_rating'] = loser_new_elo
-
-#     # No need to return anything as the DataFrame is passed by reference
-#     return winner_new_elo, loser_new_elo
-
 def update_elos(winner_id, loser_id, study_data, elo_history):
     # Get current ELO ratings
     winner_elo = study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'].iloc[0]
@@ -162,8 +120,19 @@ def update_elos(winner_id, loser_id, study_data, elo_history):
 def update_instability():
     pass
 
-def get_next_events(study_data):
-    next_events = get_next_events_based_on_elo(study_data)
+def get_next_events(study_data, user_answers):
+    window_size = 10
+    next_events = get_next_events_based_on_elo(study_data, window_size)
+    user_pairs = [[a[0], a[1]] for a in user_answers] + [[a[1], a[0]] for a in user_answers]
+    next_event_pairs = [next_events[0]['event_ID'], next_events[1]['event_ID']]
+
+    c = 0
+    while next_event_pairs in user_pairs:
+        next_events = get_next_events_based_on_elo(study_data, window_size)
+        c += 1
+        if c > window_size * 2:
+            window_size += 10
+            c = 0
 
     next_events_dict = {}
     for i, next_event in enumerate(next_events):
@@ -172,20 +141,6 @@ def get_next_events(study_data):
 
     return next_events_dict
 
-def get_next_events_test(study_data):
-    # return a specific event for testing purposes
-    next_event_1 = study_data.loc[study_data['event_ID'] == 1]
-    next_event_2 = study_data.loc[study_data['event_ID'] == 3]
-
-    next_events_dict = {}
-    next_events_dict[f"event0_details"] = str(next_event_1['event_CLEANED'].values[0])
-    next_events_dict[f"event0_ID"] = int(next_event_1['event_ID'].values[0])
-    next_events_dict[f"event1_details"] = str(next_event_2['event_CLEANED'].values[0])
-    next_events_dict[f"event1_ID"] = int(next_event_2['event_ID'].values[0])
-
-    return next_events_dict
-
-#### Make sure there are no repeated event pairs
 # Returns list of 2 DataFrame rows with event details
 def get_next_events_based_on_elo(study_data, window_size=10):
     # First sort the data by elo_rating
@@ -202,7 +157,7 @@ def get_next_events_based_on_elo(study_data, window_size=10):
 
     # Randomly select the first event
     index1 = random.randint(0, len(eligible_events) - 1)
-
+    
     # Define the range for the second event selection
     lower_bound = max(0, index1 - window_size)
     upper_bound = min(len(eligible_events) - 1, index1 + window_size)

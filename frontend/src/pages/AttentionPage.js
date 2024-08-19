@@ -1,7 +1,7 @@
 import React from 'react';
 import './AttentionPage.css';
 
-const AttentionPage = ({ word, onContinue }) => {
+const AttentionPage = ({ word, start, buttonText, onContinue }) => {
   const displayWord = word.toUpperCase();
 
   if (displayWord === 'BETTER') {
@@ -13,14 +13,21 @@ const AttentionPage = ({ word, onContinue }) => {
   return (
     <div className="attention-page">
       <h1>ATTENTION: Change of Question Wording</h1>
-      <p>
-        From this point forward, we would like to understand which of the two scenarios presented you think is {word}.
-        The questions in the following section of the task will all be phrased as follows:
-      </p>
-      <p className="question">
+      {start ? (
+        <p>
+          At the start of this task, we would like to understand which of the two scenarios presented you think is {word}.
+          The questions in the following section of the task will all be phrased as follows:
+        </p>
+      ) : (
+        <p>
+          From this point forward, we would like to understand which of the two scenarios presented you think is {word}.
+          The questions in the following section of the task will all be phrased as follows:
+        </p>
+      )}
+      <p className="questionAttention">
         “IN YOUR OPINION, WHICH OF THESE SCENARIOS IS {word}?”
       </p>
-      <button className="continue-button" onClick={onContinue}>Continue</button>
+      <button className="continue-button" onClick={onContinue}>{buttonText}</button>
     </div>
   );
 }

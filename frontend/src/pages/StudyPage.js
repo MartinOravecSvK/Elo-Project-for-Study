@@ -17,7 +17,8 @@ function StudyPage({
     setError, 
     counter, 
     setCounter, 
-    userId 
+    userId,
+    setVisibleHeader,
 }) {
     const otherFields = false;
     
@@ -38,7 +39,6 @@ function StudyPage({
         if (!userId) {
             console.error('User ID not found');
         }
-        console.log(events);
         if (!events) {
             fetchEvents();
         }
@@ -55,7 +55,6 @@ function StudyPage({
                 setEventsNum(data.progress.number_of_questions);
                 setBlockSize(Math.trunc(data.progress.number_of_questions/2));
             } else {
-                console.log(data.error || data.message || 'No events found')
                 setEvents({});
                 if (data.message === 'Study completed') {
                     setFinishedStudy(true);
@@ -118,7 +117,6 @@ function StudyPage({
             }
         }
 
-        console.log(counter, blockSize, worseStart)
         const shouldSwitch = (counter < blockSize && worseStart) || (counter >= blockSize && !worseStart);
         const finalLoserId = shouldSwitch ? winner_id : loser_id;
         const finalWinnerId = shouldSwitch ? loser_id : winner_id;
@@ -144,12 +142,10 @@ function StudyPage({
             const data = await response.json();
             if (data.events) {
                 setEvents(data.events);
-                console.log('New events fetched:', data.events)
                 setEventsDone(data.progress.current_completed);
                 setEventsNum(data.progress.number_of_questions);
                 localStorage.setItem('events', JSON.stringify(data.events));
             } else {    
-                console.log(data.error || data.message || 'No events found')
                 setEvents({});
                 if (data.message === 'Study completed') {
                     setFinishedStudy(true);
@@ -172,22 +168,34 @@ function StudyPage({
     };
 
     if (!attention1) {
-        console.log('Attention word:', attention1Word, 'worseStart:', worseStart)
-        return <AttentionPage word={attention1Word} onContinue={() => {
-            setAttention1(!attention1);
-            localStorage.setItem('attention1', 'true');
-        }}/>
+        setVisibleHeader(false);
+        return <AttentionPage 
+            word={attention1Word} 
+            buttonText={"Start"} 
+            start={true}
+            onContinue={() => {
+                setAttention1(!attention1);
+                localStorage.setItem('attention1', 'true');
+            }}
+        />
     }
 
     if (!attention2 && counter === blockSize) {
-        console.log('Counter:', counter, 'Block size:', blockSize)
+        setVisibleHeader(false);
         if (!attention2) {
-            return <AttentionPage word={attention2Word} onContinue={() => {
-                setAttention2(!attention2);
-                localStorage.setItem('attention2', 'true');
-            }}/>
+            return <AttentionPage 
+                word={attention2Word} 
+                buttonText={"Continue"} 
+                start={false}
+                onContinue={() => {
+                    setAttention2(!attention2);
+                    localStorage.setItem('attention2', 'true');
+                }}
+            />
         }
     }
+
+    setVisibleHeader(true);
 
     return (
         <div className='StudyPage'>
