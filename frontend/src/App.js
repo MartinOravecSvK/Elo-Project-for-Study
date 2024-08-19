@@ -29,6 +29,8 @@ function App() {
     const [failedAttention, setFailedAttention] = useState(false);
     const [blocked, setBlocked] = useState(localStorage.getItem('blocked') === 'true');
     
+    const [visibleHeader, setVisibleHeader] = useState(false);
+
     const generateUserId = useCallback(async () => {
         // Generate a random 8-character user ID
         const user_id = Math.random().toString(36).substr(2, 8);
@@ -48,7 +50,6 @@ function App() {
             } else {
                 localStorage.setItem('user_id', user_id);
                 setUserId(user_id);
-                console.log('Data: ', data);
                 setBlockSize(Math.trunc(data.questions_num/2));
                 localStorage.setItem('bloackSize', Math.trunc(data.questions_num/2));
                 setEventsNum(data.questions_num);
@@ -110,7 +111,6 @@ function App() {
         }
         if (localStorage.getItem('startWorse') !== null) {
             setStartWorse(localStorage.getItem('startWorse') === 'true');
-            console.log('Start worse:', localStorage.getItem('startWorse'));
         } else if (localStorage.getItem('startWorse') === null) {
             const isStartWorse = Math.random() >= 0.5;
             setStartWorse(isStartWorse);
@@ -125,13 +125,11 @@ function App() {
         // Check if user ID is already set in local storage
         if (!localStorage.getItem('user_id')) {
             generateUserId();
-        } else {
-            console.log('User ID:', localStorage.getItem('user_id'));
-        }
+        } 
     }, [generateUserId]);
 
     useEffect(() => {
-        if (currentPageIndex > 4) {
+        if (currentPageIndex > 3) {
             if (failedAttention) {
                 blockUser(localStorage.getItem('user_id'));
                 setBlocked(true);
@@ -165,14 +163,14 @@ function App() {
         <div className="App">
             {currentPageIndex === 0 && <ParticipantInformationPage nextPage={nextPage} />}
             {currentPageIndex === 1 && <InstructionPage1 nextPage={nextPage} />}
-            {currentPageIndex === 2 && <InstructionPage2 nextPage={nextPage} />}
-            {currentPageIndex === 3 && <TestPage1 nextPage={nextPage} userId={localStorage.getItem('user_id')} setError={setError} setFailedAttention={setFailedAttention} />}
-            {currentPageIndex === 4 && <TestPage2 nextPage={nextPage} userId={localStorage.getItem('user_id')} setError={setError} setFailedAttention={setFailedAttention} />}
+            {currentPageIndex === 2 && <TestPage1 nextPage={nextPage} userId={localStorage.getItem('user_id')} setError={setError} setFailedAttention={setFailedAttention} />}
+            {currentPageIndex === 3 && <TestPage2 nextPage={nextPage} userId={localStorage.getItem('user_id')} setError={setError} setFailedAttention={setFailedAttention} />}
+            {currentPageIndex === 4 && <InstructionPage2 nextPage={nextPage} />}
             {currentPageIndex > 4 && (
                 finishedStudy ? 
                     <FinishedStudyPage /> :
                         <>
-                            <HeaderComponent eventsNum={eventsNum} eventsDone={eventsDone} />
+                            <HeaderComponent eventsNum={eventsNum} eventsDone={eventsDone} visible={visibleHeader} />
                             <StudyPage 
                                 setFinishedStudy={setFinishedStudy} 
                                 setEventsNum={setEventsNum} 
@@ -184,6 +182,7 @@ function App() {
                                 counter={counter}
                                 setCounter={setCounter}
                                 userId={userId}
+                                setVisibleHeader={setVisibleHeader}
                             />
                         </>
             )}

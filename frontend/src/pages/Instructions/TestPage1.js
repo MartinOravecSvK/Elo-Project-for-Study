@@ -10,21 +10,6 @@ function TestPage1({ nextPage, userId, setError, setFailedAttention }) {
         if (selectedEvent2 === 1) {
             setFailedAttention(true);
             nextPage();
-            // try {
-            //     const response = await fetch(`${config.apiBaseUrl}/block_user`, {
-            //         method: 'POST',
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //         },
-            //         body: JSON.stringify({
-            //             user_id: userId,
-            //         }),
-            //     });
-            //     const data = await response.json();
-            //     setError(data.message);
-            // } catch (error) {
-            //     console.error('Error blocking user:', error);
-            // }
         } else {
             nextPage();
         }
@@ -32,9 +17,8 @@ function TestPage1({ nextPage, userId, setError, setFailedAttention }) {
 
     return (
         <div>
-            <h1>Test to check understand better/worse judgements</h1>
             <h2 className='description'>
-                The following 4 questions are to asses your understanding of the terms "better" and "worse". Please select ONE answer per question
+                The following 4 questions are to assess your understanding of the terms "better" and "worse". Please select ONE answer per question
             </h2>
             <h3>
                 1. Which of these scenarios is <ins className='worse'>WORSE</ins>?

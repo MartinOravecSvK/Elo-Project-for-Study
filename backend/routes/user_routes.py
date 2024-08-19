@@ -1,7 +1,7 @@
 from flask import Flask, Blueprint, request, jsonify
 from flask_apscheduler import APScheduler
 from flask_apscheduler import APScheduler
-from utils.data_functions import get_next_events, update_elos, get_study_data, get_next_events_test
+from utils.data_functions import get_next_events, update_elos, get_study_data
 import time
 import json
 import pandas as pd
@@ -87,8 +87,10 @@ def get_next():
             user_progress[user_id] = [0, [], time.time()]
 
     with study_data_lock:
-        # next_events = get_next_events_test(study_data)
-        next_events = get_next_events(study_data)
+        if user_id not in  user_answers:
+            next_events = get_next_events(study_data, [])
+        else:
+            next_events = get_next_events(study_data, user_answers[user_id])
     with user_progress_lock:
         user_progress[user_id][1] = [int(next_events[f"event{i}_ID"]) for i in range(2)]
         progress = {'current_completed': user_progress[user_id][0], 'number_of_questions': number_of_questions}
@@ -179,7 +181,7 @@ def submit_answer():
 
     with study_data_lock:
         # next_events = get_next_events_test(study_data)
-        next_events = get_next_events(study_data)
+        next_events = get_next_events(study_data, user_answers[user_id])
     with user_progress_lock:
         user_progress[user_id][1] = [int(next_events[f"event{i}_ID"]) for i in range(2)]
         user_progress[user_id][2] = time.time()
