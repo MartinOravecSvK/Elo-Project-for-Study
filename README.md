@@ -100,35 +100,32 @@ def save_data():
 ### Elo Rating Calculation
 The Elo rating for each event is calculated using the following formula:
 
-1. **Expected Score Calculation:**
+## Elo Rating Calculation
 
-   The expected score for the winner (\(E_w\)) and the loser (\(E_l\)) are calculated using the current Elo ratings:
+The Elo rating for each event is updated based on the following formulas:
 
-   \[
-   E_w = \frac{1}{1 + 10^{\frac{R_l - R_w}{400}}}
-   \]
+### 1. Expected Score Calculation
 
-   \[
-   E_l = \frac{1}{1 + 10^{\frac{R_w - R_l}{400}}}
-   \]
+The expected score for the winner (\(E_w\)) and the loser (\(E_l\)) are calculated using the current Elo ratings:
 
-   where:
-   - \(R_w\) is the current Elo rating of the winner.
-   - \(R_l\) is the current Elo rating of the loser.
+\[ E_w = \frac{1}{1 + 10^{\frac{R_l - R_w}{400}}} \]
 
-2. **New Elo Rating Calculation:**
+\[ E_l = \frac{1}{1 + 10^{\frac{R_w - R_l}{400}}} \]
 
-   The new Elo ratings for the winner (\(R'_w\)) and the loser (\(R'_l\)) are calculated as follows:
+where:
+- \(R_w\) is the current Elo rating of the winner.
+- \(R_l\) is the current Elo rating of the loser.
 
-   \[
-   R'_w = R_w + K \times (1 - E_w)
-   \]
+### 2. New Elo Rating Calculation
 
-   \[
-   R'_l = R_l + K \times (0 - E_l)
-   \]
+The new Elo ratings for the winner (\(R'_w\)) and the loser (\(R'_l\)) are calculated as follows:
 
-   where:
-   - \(K\) is a constant (often set to 32) that determines the sensitivity of the rating system.
-   - \(1\) represents the actual score for the winner (who won).
-   - \(0\) represents the actual score for the loser (who lost).
+\[ R'_w = R_w + K \times (1 - E_w) \]
+
+\[ R'_l = R_l + K \times (0 - E_l) \]
+
+where:
+- \(K\) is a constant (often set to 32) that determines the sensitivity of the rating system.
+- \(1\) represents the actual score for the winner.
+- \(0\) represents the actual score for the loser.
+
