@@ -12,7 +12,7 @@ const AttentionPage = ({ word, start, buttonText, onContinue }) => {
 
   return (
     <div className="attention-page">
-      <h1>ATTENTION: Change of Question Wording</h1>
+      {start ? (<h1>ATTENTION: Question Wording</h1>) : <h1>ATTENTION: Change of Question Wording</h1>}
       {start ? (
         <p>
           At the start of this task, we would like to understand which of the two scenarios presented you think is {word}.

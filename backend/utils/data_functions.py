@@ -120,17 +120,41 @@ def update_elos(winner_id, loser_id, study_data, elo_history):
 def update_instability():
     pass
 
+# def get_next_events(study_data, user_answers):
+#     window_size = 10
+#     next_events = get_next_events_based_on_elo(study_data, window_size)
+#     user_pairs = [[a[0], a[1]] for a in user_answers] + [[a[1], a[0]] for a in user_answers]
+#     next_event_pairs = [next_events[0]['event_ID'], next_events[1]['event_ID']]
+
+#     c = 0
+#     while next_event_pairs in user_pairs:
+#         next_events = get_next_events_based_on_elo(study_data, window_size)
+#         c += 1
+#         if c > window_size * 2:
+#             window_size += 10
+#             c = 0
+
+#     next_events_dict = {}
+#     for i, next_event in enumerate(next_events):
+#         next_events_dict[f"event{i}_details"] = str(next_event['event_CLEANED'])
+#         next_events_dict[f"event{i}_ID"] = int(next_event['event_ID'])
+
+#     return next_events_dict
+
 def get_next_events(study_data, user_answers):
     window_size = 10
     next_events = get_next_events_based_on_elo(study_data, window_size)
-    user_pairs = [[a[0], a[1]] for a in user_answers] + [[a[1], a[0]] for a in user_answers]
-    next_event_pairs = [next_events[0]['event_ID'], next_events[1]['event_ID']]
+    # Flatten the user_answers list to a set of unique event IDs seen before
+    seen_events = set([event_id for pair in user_answers for event_id in pair])
+    
+    next_event_ids = [next_events[0]['event_ID'], next_events[1]['event_ID']]
 
     c = 0
-    while next_event_pairs in user_pairs:
+    while any(event_id in seen_events for event_id in next_event_ids):
         next_events = get_next_events_based_on_elo(study_data, window_size)
+        next_event_ids = [next_events[0]['event_ID'], next_events[1]['event_ID']]
         c += 1
-        if c > window_size * 2:
+        if c > window_size:
             window_size += 10
             c = 0
 
@@ -140,6 +164,7 @@ def get_next_events(study_data, user_answers):
         next_events_dict[f"event{i}_ID"] = int(next_event['event_ID'])
 
     return next_events_dict
+
 
 # Returns list of 2 DataFrame rows with event details
 def get_next_events_based_on_elo(study_data, window_size=10):

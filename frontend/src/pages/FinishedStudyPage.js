@@ -56,7 +56,7 @@ function FinishedStudyPage() {
                         365 days a year).
                     </p>
                     <p><b>
-                        Please click the link below to submit your data and return to Prolific
+                        Please click the link below to go to Prolific
                     </b></p>
                     <p>
                         <b>
@@ -64,10 +64,6 @@ function FinishedStudyPage() {
                                 Click here to finish study
                             </a>
                         </b>
-                    </p>
-                    <p>
-                        If you no longer wish to submit your data to this research study you must close this browser window
-                        and withdraw your submission from Prolific.
                     </p>
                 </div>
             </div>
