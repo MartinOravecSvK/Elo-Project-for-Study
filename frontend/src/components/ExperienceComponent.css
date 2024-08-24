@@ -2,11 +2,23 @@
     text-align: center;
 }
 
-.question {
+.experience_question {
     text-decoration: none;
     text-align: center;
     color: #000000;
     font-size: 44px;
+}
+
+.highlight-better {
+    color: green;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.highlight-worse {
+    color: red;
+    font-weight: bold;
+    text-decoration: underline;
 }
 
 .events {
