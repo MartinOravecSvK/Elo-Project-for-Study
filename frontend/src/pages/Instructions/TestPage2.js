@@ -1,27 +1,15 @@
 import React, { useState } from 'react';
+import config from '../../config';
 import './TestPage2.css';
 
-function TestPage2({ nextPage, userId, setError }) {
+function TestPage2({ nextPage, userId, setError, setFailedAttention }) {
     const [selectedEvent1, setSelectedEvent1] = useState(null);
     const [selectedEvent2, setSelectedEvent2] = useState(null);
 
     const checkThenNext = async () => {
         if (selectedEvent2 === 2) {
-            try {
-                const response = await fetch('http://localhost:5000/block_user', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        user_id: userId,
-                    }),
-                });
-                const data = await response.json();
-                setError(data.message);
-            } catch (error) {
-                console.error('Error blocking user:', error);
-            }
+            setFailedAttention(true);
+            nextPage();
         } else {
             nextPage();
         }
@@ -29,7 +17,6 @@ function TestPage2({ nextPage, userId, setError }) {
 
     return (
         <div className='TestPage2Wrapper'>
-            <h1>Test to check understand better/worse judgements</h1>
             <h3>
                 3. Which of these scenarios is <ins className='better'>BETTER</ins>?
             </h3>
@@ -64,7 +51,8 @@ function TestPage2({ nextPage, userId, setError }) {
                     <h2>Feeling unsafe and in danger.</h2>
                 </div>
             </div>
-            <button onClick={checkThenNext} className='NextButton'>Next</button>
+            {selectedEvent1 && selectedEvent2 && <button onClick={checkThenNext} className='NextButton'>Next</button>}
+            {/* <button onClick={checkThenNext} className='NextButton'>Next</button> */}
         </div>
     );
 }

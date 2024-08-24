@@ -1,29 +1,25 @@
-h1 {
-    font-size: 46px;
-    margin-bottom: 20px;
-    color: #007bff;
-    font-weight: bold;
-}
-
-.instrucion-header {
-    font-size: 32px;
-    margin-bottom: 20px;
-    color: #000000;
-    font-weight: bold;
-    text-decoration: underline !important;
-}
-
-p {
-    font-size: 26px;
-    line-height: 1.5;
-    margin-bottom: 20px;
-}
-
-.InstructionWrapper {
+.attention-page {
     text-align: center;
+    margin: 20px;
+    font-family: Arial, sans-serif;
+}
+  
+.highlight-better {
+    color: green;
+    font-weight: bold;
 }
 
-.NextButton {
+.highlight-worse {
+    color: red;
+    font-weight: bold;
+}
+  
+.questionAttention {
+    font-size: 24;
+    margin: 20px 0;
+}
+  
+.continue-button {
     position: fixed;
     bottom: 20px;
     left: 50%;
@@ -37,10 +33,10 @@ p {
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
-    z-index: 1000; /* Ensure it is above other elements */
+    z-index: 1000;
 }
-
-.NextButton:hover {
+  
+.continue-button:hover {
     background-color: #0056b3;
     border-color: #003f7f;
     box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
