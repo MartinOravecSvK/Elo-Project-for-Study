@@ -1,9 +1,5 @@
 const config = {
-    apiBaseUrl: process.env.REACT_APP_API_BASE_URL || 'https://www.choicetask.com/elo-study'
+    apiBaseUrl: process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000'
 };
-
-// const config = {
-//     apiBaseUrl: process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000'
-// };
 
 export default config;
