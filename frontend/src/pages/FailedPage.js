@@ -33,7 +33,7 @@ function FailedPage() {
                     <p>
                         <b>
                             {/* Change this link of course */}
-                            <a href={`https://app.prolific.com/`} >
+                            <a href={`https://app.prolific.com/submissions/complete?cc=C19Z7RII`} >
                                 CLICK HERE TO RETURN TO PROLIFIC
                             </a>
                         </b>
