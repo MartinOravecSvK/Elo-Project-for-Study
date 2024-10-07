@@ -71,15 +71,15 @@ const ParticipantInformationPage = ({ nextPage }) => {
 
             <h3>Ethics</h3>
             <p>
-                This study has been given ethical approval by the Research Ethics Committee of the University 
-                of Bristol (School of Psychology Ethics approval code 19260). No risks or adverse effects have 
-                been identified and no personal identifying information will be available to researchers unless 
-                you choose to provide it. By taking part in this University of Bristol research there will be no 
-                identifiable health benefits to you. It is important to understand that the research team will 
-                not be monitoring responses in real-time for any urgent or distressing content. Therefore, if you 
-                have an immediate need for support or are in a crisis, we strongly advise you to seek appropriate 
-                help from a qualified professional or contact helpline services available in your area 
-                (<a href="http://www.samaritans.org" target="_blank" rel="noopener noreferrer">www.samaritans.org</a> are available 24/7, 365 days a year).
+                This study has been given ethical approval by the Research Ethics Committee of the University of
+                Bristol (School of Psychology, Ethics approval code 21823). No risks or adverse effects have been
+                identified, and no personal identifying information will be available to researchers unless you choose
+                to provide it. By taking part in this University of Bristol research there will be no identifiable health
+                benefits to you. It is important to understand that the research team will not be monitoring
+                responses in real-time for any urgent or distressing content. Therefore, if you have an immediate
+                need for support or are in a crisis, we strongly advise you to seek appropriate help from a qualified
+                professional or contact helpline services available in your area (<a href="http://www.samaritans.org" target="_blank" rel="noopener noreferrer">www.samaritans.org</a> are available 24/7, 365 days a year).
+                If you have any questions about the research, feel free to contact us before starting the study.
             </p>
 
             <p>
@@ -88,35 +88,41 @@ const ParticipantInformationPage = ({ nextPage }) => {
 
             <h3>What would happen to the results of the research study?</h3>
             <p>
-                When the study has been completed, we would analyse the study data we have collected and report 
-                the findings. This would be reported in an appropriate scientific journal or presented at a 
-                scientific meeting. As your study data are anonymised, it would not be possible to identify you 
-                by name from any aspect of documentation or reporting for this research study. Your participation 
-                in the study is completely anonymous; we do not store your name or identity, and your name would 
-                not be in any way linked to the data.
+                When the study has been completed, we will analyse the study data we have collected and report
+                the findings. This may be reported in an appropriate scientific journal or presented at a scientific
+                meeting. As your study data are anonymised, it will not be possible to identify you by name from any
+                aspect of documentation or reporting for this research study. Your participation in the study is
+                completely anonymous, we do not store your name or identity and your name will not be in any way
+                linked to the data.
             </p>
             <p>
-                You would not have access to your individual data collected during the study. To safeguard your 
-                rights, we would use the minimum personally identifiable information possible. At the end of the 
-                study, your data would become “open data”. Open data means that it would be stored in an online 
-                database so that it is publicly available to anyone interested in the research. We would therefore 
-                have no control over how these data are used. However, all data would be anonymised and Prolific 
-                IDs would be removed before being made available.
+                You will not have access to any individual data collected during the study and at the end of the study
+                your data would become “open data”
             </p>
             <p>
-                If you withdraw before completing the study, any data submitted until that point would be incomplete 
-                and would not be analysed or made open access. If you consent, you agree to the University of Bristol 
-                keeping and processing the information that you have provided during the study. Your consent is 
-                conditional on the University complying with its duties and obligations under the Data Protection Act.
+                Open data means that the data will be stored in an online database that is publicly available to
+                anyone interested in the research. We will therefore have no control over how these data are used.
+                However, all data will be anonymised and Prolific IDs will be removed before the data are made
+                available. There will be no way to identify you from the research data.
+            </p>
+            <p>
+                If you consent, you agree to the University of Bristol keeping and processing the information that
+                you have provided during the study. Your consent is conditional on the University complying with its
+                duties and obligations under the Data Protection Act
             </p>
 
             <h3>Can I withdraw my study data after I have participated in the study?</h3>
             <p>
-                All data collected from you is anonymised and initially only identified by your Prolific ID. At 
-                completion of the study, your Prolific ID is then replaced by a numeric identifier. At this point, 
-                links between your identity and your anonymised data set would be destroyed. We would therefore 
-                be unable to link your data with your Prolific user ID and as such we would no longer be able to 
-                withdraw your data as we would no longer be able to identify which data set is yours.
+                It is not possible to withdraw any responses you have given up to the point you either finish the
+                study or discontinue with the study. Each response you give within this study is added into a live
+                "score" which adjusts based on all participants' data. This score will change over the study as it goes
+                along; in short, the questions are chosen based on the previous answers and so it is not possible to
+                retract any answer after it is submitted. If you no longer wish to participate you can leave the study,
+                this will mean that no further data is collected but will not withdraw the data you have already
+                provided.
+                All data collected from you is anonymised and initially identified by your Prolific ID. At completion of
+                the study your Prolific ID is replaced by a numeric identifier. At this point links between your identity
+                and your anonymised data set will be destroyed.
             </p>
 
             <p>
