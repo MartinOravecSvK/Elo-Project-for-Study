@@ -16,12 +16,9 @@ classification = ['Daily', 'Major']
 # Returns the study data as a pandas DataFrame
 # Columns: ['event_details', 'event_ID', 'elo_rating']
 def get_study_data():
-    study_data_file = 'output/study_data.csv'
-    # try:
-        # study_data = read_csv(study_data_file)
+    study_data_file = 'output/study_data.json'
     if path.exists(study_data_file):
         study_data = pd.read_json(study_data_file, orient='split')
-    # except FileNotFoundError:
     else:
         # Get the study data path
         current_dir = path.dirname(path.abspath(__file__))
@@ -72,10 +69,11 @@ def get_historical_data(study_data):
         elo_history = {}
 
     # Initialize ELO history for each event if needed
-    for index, row in study_data.iterrows():
-        event_id = row['event_ID']
-        if event_id not in elo_history:
-            elo_history[event_id] = [row['elo_rating']]
+    if elo_history == {}:
+        for index, row in study_data.iterrows():
+            event_id = row['event_ID']
+            if event_id not in elo_history:
+                elo_history[str(event_id)] = [row['elo_rating']]
 
     return elo_history
 
@@ -107,8 +105,8 @@ def update_elos(winner_id, loser_id, study_data, elo_history):
     loser_new_elo = loser_elo + int(K * (0 - expected_loser))
 
     # Update ELO history
-    elo_history[winner_id].append(int(winner_new_elo))
-    elo_history[loser_id].append(int(loser_new_elo))
+    elo_history[str(winner_id)].append(int(winner_new_elo))
+    elo_history[str(loser_id)].append(int(loser_new_elo))
 
     # Update current ELO in study_data
     study_data.loc[study_data['event_ID'] == winner_id, 'elo_rating'] = winner_new_elo
@@ -119,27 +117,6 @@ def update_elos(winner_id, loser_id, study_data, elo_history):
 # Update the instability of the event
 def update_instability():
     pass
-
-# def get_next_events(study_data, user_answers):
-#     window_size = 10
-#     next_events = get_next_events_based_on_elo(study_data, window_size)
-#     user_pairs = [[a[0], a[1]] for a in user_answers] + [[a[1], a[0]] for a in user_answers]
-#     next_event_pairs = [next_events[0]['event_ID'], next_events[1]['event_ID']]
-
-#     c = 0
-#     while next_event_pairs in user_pairs:
-#         next_events = get_next_events_based_on_elo(study_data, window_size)
-#         c += 1
-#         if c > window_size * 2:
-#             window_size += 10
-#             c = 0
-
-#     next_events_dict = {}
-#     for i, next_event in enumerate(next_events):
-#         next_events_dict[f"event{i}_details"] = str(next_event['event_CLEANED'])
-#         next_events_dict[f"event{i}_ID"] = int(next_event['event_ID'])
-
-#     return next_events_dict
 
 def get_next_events(study_data, user_answers):
     window_size = 10
@@ -173,8 +150,8 @@ def get_next_events_based_on_elo(study_data, window_size=10):
     sorted_data = study_data.sort_values(by='elo_rating')
 
     # Ensure the events are not repeated and their 'seen' counts are balanced
-    eligible_events = sorted_data[(sorted_data['seen'] < sorted_data['seen'].mean() + 2) &
-                                  (sorted_data['seen'] > sorted_data['seen'].mean() - 2)]
+    eligible_events = sorted_data[(sorted_data['seen'] < sorted_data['seen'].mean() + 1) &
+                                  (sorted_data['seen'] > sorted_data['seen'].mean() - 1)]
 
      # Randomly select two events close in elo_rating
     if len(eligible_events) < 2:
