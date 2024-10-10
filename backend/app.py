@@ -8,9 +8,7 @@ from flask_cors import CORS
 import atexit
 
 # Create a Flask app
-# app = Flask(__name__, static_folder='../frontend/build', static_url_path='/kimberley/Elo-Study/backend')
 app = Flask(__name__, static_folder='../build', static_url_path='/')
-# CORS(app, resources={r"/*": {"origins": "*"}})  # Allow requests from your frontend dev server
 CORS(app)
 app.secret_key = 'your_secret_key'  
 
@@ -34,5 +32,3 @@ atexit.register(lambda: scheduler.shutdown(wait=False))
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8000)
 
-# WSGI entry point
-# application = app

@@ -12,13 +12,13 @@ from locks.locks import user_progress_lock, user_answers_lock, blacklist_lock, s
 import random
 generate_random_user_id = lambda: ''.join(random.choices('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', k=10))
 
-
 user_bp = Blueprint('user', __name__)
 
 # Sheduler to save data 
+# The reason why the scheduler is in the routes file is because it needs to access the global variables 
+# and it is easier to access them in the routes file than in the app file
 # ______________________________________________________________________________________________________________________
 
-app = Flask(__name__)
 scheduler = APScheduler()
 
 user_bp = Blueprint('user', __name__)
@@ -32,11 +32,12 @@ def save_data():
     user_answers_file = 'output/user_answers.json'
     with user_answers_lock:
         with open(user_answers_file, 'w') as f:
-            json.dump(user_answers, f)
+            json.dump(user_answers, f, indent=4)
     study_data_file = 'output/study_data.json'
     with study_data_lock:
         with open(study_data_file, 'w') as f:
-            json.dump(study_data.to_dict(orient='records'), f, default=custom_encoder)
+            json.dump(study_data.to_dict(orient='split'), f, default=custom_encoder)
+
         with open('output/elo_history.json', 'w') as f:
             json.dump(elo_history, f)
 
