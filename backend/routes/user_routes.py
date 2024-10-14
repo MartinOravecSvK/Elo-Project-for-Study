@@ -1,6 +1,5 @@
 from flask import Flask, Blueprint, request, jsonify
 from flask_apscheduler import APScheduler
-from flask_apscheduler import APScheduler
 from utils.data_functions import get_next_events, update_elos, get_study_data
 import time
 import json
@@ -21,8 +20,6 @@ user_bp = Blueprint('user', __name__)
 
 scheduler = APScheduler()
 
-user_bp = Blueprint('user', __name__)
-
 def custom_encoder(obj):
     if isinstance(obj, pd.Series):
         return obj.tolist()
@@ -42,6 +39,10 @@ def save_data():
             json.dump(elo_history, f)
 
 scheduler.add_job(id='Save Data', func=save_data, trigger='interval', seconds=10) 
+
+def configure_scheduler(app):
+    # scheduler.init_app(app)
+    scheduler.start()
 
 def start_scheduler():
     print('Starting scheduler')

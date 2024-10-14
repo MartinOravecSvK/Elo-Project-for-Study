@@ -114,10 +114,6 @@ def update_elos(winner_id, loser_id, study_data, elo_history):
 
     return winner_new_elo, loser_new_elo
 
-# Update the instability of the event
-def update_instability():
-    pass
-
 def get_next_events(study_data, user_answers):
     window_size = 10
     next_events = get_next_events_based_on_elo(study_data, window_size)
@@ -135,6 +131,12 @@ def get_next_events(study_data, user_answers):
             window_size += 10
             c = 0
 
+    index1 = study_data[study_data['event_ID'] == next_event_ids[0]].index[0]
+    index2 = study_data[study_data['event_ID'] == next_event_ids[1]].index[0]
+
+    study_data.at[index1, 'seen'] += 1
+    study_data.at[index2, 'seen'] += 1
+
     next_events_dict = {}
     for i, next_event in enumerate(next_events):
         next_events_dict[f"event{i}_details"] = str(next_event['event_CLEANED'])
@@ -150,8 +152,9 @@ def get_next_events_based_on_elo(study_data, window_size=10):
     sorted_data = study_data.sort_values(by='elo_rating')
 
     # Ensure the events are not repeated and their 'seen' counts are balanced
-    eligible_events = sorted_data[(sorted_data['seen'] < sorted_data['seen'].mean() + 1) &
-                                  (sorted_data['seen'] > sorted_data['seen'].mean() - 1)]
+    eligible_events = sorted_data[(sorted_data['seen'] < sorted_data['seen'].mean() + 1)]
+
+    print('Eligible events: ', len(eligible_events))
 
      # Randomly select two events close in elo_rating
     if len(eligible_events) < 2:
@@ -181,10 +184,6 @@ def get_next_events_based_on_elo(study_data, window_size=10):
     index2 = np.random.choice(indices, p=probabilities)
     while index1 == index2:
         index2 = np.random.choice(indices, p=probabilities)
-
-    # Update the 'seen' counter for both events
-    study_data.at[eligible_events.iloc[index1].name, 'seen'] += 1
-    study_data.at[eligible_events.iloc[index2].name, 'seen'] += 1
 
     event1 = eligible_events.iloc[index1]
     event2 = eligible_events.iloc[index2]
