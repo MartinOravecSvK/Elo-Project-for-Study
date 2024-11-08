@@ -137,3 +137,5 @@ backend/data/All_Studies_SigEvent_details.xlsx
 backend/data/All_Studies_SigEvent_details_CLEANED_23.05.2024.xlsx
 
 backend/output/
+
+*.db
