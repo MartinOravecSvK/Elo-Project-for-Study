@@ -210,7 +210,8 @@ function StudyPage({
                     setPolarization={setPolarization}
                 />
             ) : (
-                <p>No more events to show. Study completed!</p>
+                // <p>No more events to show. Study completed!</p>
+                <p>Please wait for the server to respond, if this takes too long please refresh your browser</p>
             )}
             {otherFields && winner_id != null && loser_id != null && (
                 <CategoryComponent setCategory={setCategory} />
