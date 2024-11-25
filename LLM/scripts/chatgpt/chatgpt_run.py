@@ -12,8 +12,8 @@ def chat_completion(messages, model="gpt-3.5-turbo"):
         response = client.chat.completions.create(
             model=model,
             messages=messages,
-            max_tokens=1,  # Limit response to a single token
-            temperature=0,  # Make the output deterministic
+            max_tokens=1,
+            temperature=0.1,
             n=1,
         )
         # Access the message content directly

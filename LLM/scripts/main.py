@@ -1,6 +1,7 @@
 import pandas as pd
 import random
 import numpy as np
+from tqdm import tqdm
 from chatgpt.chatgpt_run import run_chatgpt
 from collections import defaultdict
 from pandas import read_excel
@@ -12,7 +13,7 @@ You are invited to take part in a research study to compare statements about lif
 
 What is this study about?
 
-The purpose of this study is to better understand judgments of life experiences. The life experience statements used in this study vary widely. Some statements may refer to everyday occurrences (e.g., losing an item); other statements may refer to more impactful life events (e.g., loss of a loved one). By asking you to compare these differing types of statements, we aim to understand how the general LLM AI ranks various life experiences.
+The purpose of this study is to better understand judgments of life experiences. The life experience statements used in this study vary widely. Some statements may refer to everyday occurrences (e.g., losing an item); other statements may refer to more impactful life events (e.g., loss of a loved one). By asking you to compare these differing types of statements, we aim to understand how you rank various life experiences.
 
 What will you have to do?
 
@@ -44,7 +45,6 @@ def update_elos(study_data, winner, loser, model):
     K = 32
 
     winner_elo = study_data.loc[study_data['event_ID'] == winner['event_ID'], 'elo_rating'].values[0]
-    print(study_data.loc[study_data['event_ID'] == winner['event_ID'], 'elo_rating'])
     loser_elo = study_data.loc[study_data['event_ID'] == loser['event_ID'], 'elo_rating'].values[0]
 
     expected_winner = 1 / (1 + 10 ** ((loser_elo - winner_elo) / 400))
@@ -101,48 +101,45 @@ def choose_events(study_data):
     return event1, event2
 
 def run_comparison_chatGPT(study_data, prompt_intro, comparisons, model):
+    conversation_history = [
+        {"role": "system", "content": prompt_intro.strip()}
+    ]
+
     for _ in range(comparisons):
         event1, event2 = choose_events(study_data)
-        print(event1, event2)
-        print(f"\nComparing:\n1. {event1['event_CLEANED']}\n2. {event2['event_CLEANED']}")
-        
+        # print(f"\nComparing:\n1. {event1['event_CLEANED']}\n2. {event2['event_CLEANED']}")
+
         choosing_better = random.random() < 0.5
-        
+
         if choosing_better:
             question = f"Which of the following life experiences is comparatively better?\n1. {event1['event_CLEANED']}\n2. {event2['event_CLEANED']}\nPlease respond with only '1' or '2' without any additional text."
         else:
             question = f"Which of the following life experiences is comparatively worse?\n1. {event1['event_CLEANED']}\n2. {event2['event_CLEANED']}\nPlease respond with only '1' or '2' without any additional text."
 
-        messages = [
-            {"role": "system", "content": prompt_intro.strip()},
-            {"role": "user", "content": question.strip()}
-        ]
+        conversation_history.append({"role": "user", "content": question.strip()})
 
-        response = run_chatgpt(messages, model)
+        response = run_chatgpt(conversation_history, model)
         
         if response is None:
             print("No response received. Skipping this comparison.")
             continue
 
-        print("Response:", response)
-
         if response == "1":
             if choosing_better:
-                print(f"Selected: Event 1 is better.")
                 update_elos(study_data, event1, event2, model)
             else:
-                print(f"Selected: Event 2 is worse.")
                 update_elos(study_data, event2, event1, model)
         elif response == "2":
             if choosing_better:
-                print(f"Selected: Event 2 is better.")
                 update_elos(study_data, event2, event1, model)
             else:
-                print(f"Selected: Event 1 is worse.")
                 update_elos(study_data, event1, event2, model)
         else:
             print("Invalid response received:", response)
-            # Log the invalid response and proceed without updating ELO ratings
+
+        # Add the model's response to the conversation history
+        conversation_history.append({"role": "assistant", "content": response.strip()})
+
 
 def save_results(study_data, model):
     # Save per model data
@@ -154,11 +151,14 @@ def save_results(study_data, model):
 
 if __name__ == "__main__":
     # chatGPT_models = ["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo"]
-    chatGPT_models = ["o1-preview"]
-    comparisons = 10
+    chatGPT_models = ["gpt-4-turbo"]
+    comparisons = 50
+    sim_participants = 35
+    # 105 left
     for model in chatGPT_models:
-        study_data = load_study_data()
-        print(f"\nRunning {comparisons} comparisons for {model}")
-        run_comparison_chatGPT(study_data, prompt_intro, comparisons, model)
-        save_results(study_data, model)
+        for _ in tqdm(range(sim_participants)):
+            study_data = load_study_data()
+            # print(f"\nRunning {comparisons} comparisons for {model}")
+            run_comparison_chatGPT(study_data, prompt_intro, comparisons, model)
+            save_results(study_data, model)
     print("Done!")
