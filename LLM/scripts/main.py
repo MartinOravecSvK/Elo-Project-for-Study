@@ -154,7 +154,6 @@ if __name__ == "__main__":
     chatGPT_models = ["gpt-3.5-turbo"]
     comparisons = 50
     sim_participants = 140
-    # 105 left
     study_data = load_study_data()  
     for model in chatGPT_models:
         for _ in tqdm(range(sim_participants)):
