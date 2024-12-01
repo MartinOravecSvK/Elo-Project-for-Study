@@ -151,14 +151,13 @@ def save_results(study_data, model):
 
 if __name__ == "__main__":
     # chatGPT_models = ["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo"]
-    chatGPT_models = ["gpt-4-turbo"]
+    chatGPT_models = ["gpt-3.5-turbo"]
     comparisons = 50
-    sim_participants = 35
+    sim_participants = 140
     # 105 left
+    study_data = load_study_data()  
     for model in chatGPT_models:
         for _ in tqdm(range(sim_participants)):
-            study_data = load_study_data()
-            # print(f"\nRunning {comparisons} comparisons for {model}")
             run_comparison_chatGPT(study_data, prompt_intro, comparisons, model)
             save_results(study_data, model)
     print("Done!")
