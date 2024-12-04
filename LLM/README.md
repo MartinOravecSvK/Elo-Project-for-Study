@@ -22,8 +22,77 @@ The following LLM APIs are used:
 
 You will need API keys for each of these services. Place them in a `.env` file in the root directory.
 
+### How to Obtain API Keys for LLM Providers
+
+To use this project, you'll need API keys for OpenAI (ChatGPT), Google Generative AI (Gemini), and Anthropic (Claude). Follow the instructions below to obtain the API keys:
+
+---
+
+#### **OpenAI (ChatGPT)**
+
+1. **Sign Up or Log In:**
+   - Visit the [OpenAI Platform](https://platform.openai.com/signup) to create an account or log in.
+
+2. **Navigate to API Keys:**
+   - Go to the [API Keys page](https://platform.openai.com/account/api-keys).
+
+3. **Create a New Key:**
+   - Click on "Create new secret key" to generate your API key.
+
+4. **Copy and Store the Key:**
+   - Copy the generated key and store it securely. You'll need it to authenticate your API requests.
+
+For more details, refer to OpenAI's guide: [Where do I find my OpenAI API Key?](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key)
+
+---
+
+#### **Google Generative AI (Gemini)**
+
+1. **Access Google AI Studio:**
+   - Navigate to [Google AI Studio](https://ai.google.dev/).
+
+2. **Sign In with Google Account:**
+   - Use your Google account to sign in.
+
+3. **Create a New Project:**
+   - If you don’t already have a project, create a new one in the Google Cloud Console.
+
+4. **Enable Gemini API:**
+   - In your project dashboard, enable the Gemini API.
+
+5. **Generate API Key:**
+   - Go to the "Credentials" section and click on "Create Credentials" to generate an API key.
+
+6. **Secure Your API Key:**
+   - Copy the API key and store it securely for future use.
+
+For more information, see Google's guide: [Get a Gemini API key](https://ai.google.dev/gemini-api/docs/api-key)
+
+---
+
+#### **Anthropic (Claude)**
+
+1. **Visit Anthropic's Console:**
+   - Go to the [Anthropic Console](https://console.anthropic.com/).
+
+2. **Sign Up or Log In:**
+   - Create an account or log in if you already have one.
+
+3. **Access API Keys Section:**
+   - In the console, navigate to the "API Keys" section.
+
+4. **Generate a New API Key:**
+   - Click on "Create API Key" to generate a new key.
+
+5. **Store the Key Securely:**
+   - Copy the API key and ensure it’s stored securely for your application's use.
+
+For detailed steps, refer to Anthropic's documentation: [Initial setup](https://docs.anthropic.com/en/docs/initial-setup)
+
+---
+
 ### `.env` File Example
-Put your API keys in the `.env` file:
+Put your API keys in the `/LLM/.env` file:
 ```bash
 OPENAI_API_KEY=your_openai_api_key_here
 GEMINI_API_KEY=your_gemini_api_key_here
