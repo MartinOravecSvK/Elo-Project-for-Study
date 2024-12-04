@@ -1,8 +1,49 @@
+# def run_comparison_chatGPT(study_data, prompt_intro, comparisons, model):
+#     conversation_history = [
+#         {"role": "sysZtem", "content": prompt_intro.strip()}
+#     ]
+
+#     for _ in range(comparisons):
+#         event1, event2 = choose_events(study_data)
+#         # print(f"\nComparing:\n1. {event1['event_CLEANED']}\n2. {event2['event_CLEANED']}")
+
+#         choosing_better = random.random() < 0.5
+
+#         if choosing_better:
+#             question = f"Which of the following life experiences is comparatively better?\n1. {event1['event_CLEANED']}\n2. {event2['event_CLEANED']}\nPlease respond with only '1' or '2' without any additional text."
+#         else:
+#             question = f"Which of the following life experiences is comparatively worse?\n1. {event1['event_CLEANED']}\n2. {event2['event_CLEANED']}\nPlease respond with only '1' or '2' without any additional text."
+
+#         conversation_history.append({"role": "user", "content": question.strip()})
+
+#         response = run_chatgpt(conversation_history, model)
+        
+#         if response is None:
+#             print("No response received. Skipping this comparison.")
+#             continue
+
+#         if response == "1":
+#             if choosing_better:
+#                 update_elos(study_data, event1, event2, model)
+#             else:
+#                 update_elos(study_data, event2, event1, model)
+#         elif response == "2":
+#             if choosing_better:
+#                 update_elos(study_data, event2, event1, model)
+#             else:
+#                 update_elos(study_data, event1, event2, model)
+#         else:
+#             print("Invalid response received:", response)
+
+#         # Add the model's response to the conversation history
+#         conversation_history.append({"role": "assistant", "content": response.strip()})
+from chatgpt.chatgpt_run import run_chatgpt
+from gemini.gemini_run import run_gemini
+from claude.claude_run import run_claude
 import pandas as pd
 import random
 import numpy as np
 from tqdm import tqdm
-from chatgpt.chatgpt_run import run_chatgpt
 from collections import defaultdict
 from pandas import read_excel
 
@@ -17,7 +58,7 @@ The purpose of this study is to better understand judgments of life experiences.
 
 What will you have to do?
 
-You will be asked to compare multiple pairs of statements that refer to life experiences. You will have to decide which of the statements is comparatively better or worse than the other, depending on the phrasing of the question when these statements are presented to you. The events are provided without context, so you can be as general as you wish.
+You will be asked to compare multiple pairs of statements that refer to life experiences, one pair at a time. You will have to decide which of the statements is comparatively better or worse than the other, depending on the phrasing of the question when these statements are presented to you. The events are provided without context, so you can be as general as you wish.
 
 Please respond with only '1' or '2' without any additional text.
 """
@@ -100,15 +141,21 @@ def choose_events(study_data):
 
     return event1, event2
 
-def run_comparison_chatGPT(study_data, prompt_intro, comparisons, model):
+def save_results(study_data, model):
+    # Save per model data
+    df = pd.DataFrame(decisions[model])
+    df.to_csv(f'./data/output/{model}_results.csv', index=False)
+    # Save study_data
+    study_data.to_csv(f'./data/output/{model}_study_data.csv', index=False)
+    print(f"Results saved for model {model}")
+
+def run_comparison(study_data, prompt_intro, comparisons, model, llm_runner):
     conversation_history = [
         {"role": "system", "content": prompt_intro.strip()}
     ]
 
     for _ in range(comparisons):
         event1, event2 = choose_events(study_data)
-        # print(f"\nComparing:\n1. {event1['event_CLEANED']}\n2. {event2['event_CLEANED']}")
-
         choosing_better = random.random() < 0.5
 
         if choosing_better:
@@ -117,9 +164,7 @@ def run_comparison_chatGPT(study_data, prompt_intro, comparisons, model):
             question = f"Which of the following life experiences is comparatively worse?\n1. {event1['event_CLEANED']}\n2. {event2['event_CLEANED']}\nPlease respond with only '1' or '2' without any additional text."
 
         conversation_history.append({"role": "user", "content": question.strip()})
-
-        response = run_chatgpt(conversation_history, model)
-        
+        response = llm_runner(conversation_history, model)
         if response is None:
             print("No response received. Skipping this comparison.")
             continue
@@ -135,28 +180,38 @@ def run_comparison_chatGPT(study_data, prompt_intro, comparisons, model):
             else:
                 update_elos(study_data, event1, event2, model)
         else:
-            print("Invalid response received:", response)
+            print("Invalid response received:")
 
-        # Add the model's response to the conversation history
         conversation_history.append({"role": "assistant", "content": response.strip()})
 
 
-def save_results(study_data, model):
-    # Save per model data
-    df = pd.DataFrame(decisions[model])
-    df.to_csv(f'./data/output/{model}_results.csv', index=False)
-    # Save study_data
-    study_data.to_csv(f'./data/output/{model}_study_data.csv', index=False)
-    print(f"Results saved for model {model}")
-
 if __name__ == "__main__":
-    # chatGPT_models = ["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo"]
-    chatGPT_models = ["gpt-3.5-turbo"]
-    comparisons = 50
-    sim_participants = 140
-    study_data = load_study_data()  
-    for model in chatGPT_models:
-        for _ in tqdm(range(sim_participants)):
-            run_comparison_chatGPT(study_data, prompt_intro, comparisons, model)
-            save_results(study_data, model)
+    # To find Gemini models visit:
+    # https://ai.google.dev/gemini-api/docs/models/gemini
+    # To find ChatGPT models visit:
+    # https://platform.openai.com/docs/models
+    # To find Claude models visit:
+    # https://docs.anthropic.com/en/docs/about-claude/models
+    llm_models = {
+        # "chatgpt": ["gpt-3.5-turbo"],
+        # "gemini": ["gemini-1.5-flash"],
+        "claude": ["claude-3-5-sonnet-20241022"]
+    }
+    llm_runners = {
+        # "chatgpt": run_chatgpt,
+        # "gemini": run_gemini,
+        "claude": run_claude
+    }
+
+    # comparisons = 50
+    # sim_participants = 140
+    comparisons = 2
+    sim_participants = 2
+    study_data = load_study_data()
+
+    for llm, models in llm_models.items():
+        for model in models:
+            for _ in tqdm(range(sim_participants)):
+                run_comparison(study_data, prompt_intro, comparisons, model, llm_runners[llm])
+                save_results(study_data, model)
     print("Done!")

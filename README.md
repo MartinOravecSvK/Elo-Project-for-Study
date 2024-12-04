@@ -127,3 +127,6 @@ The Elo rating for each event is updated based on the following steps:
    - `1` represents the actual score for the winner.
    - `0` represents the actual score for the loser.
 
+# Running LLM study
+
+[LLM README](./LLM/README.md)
