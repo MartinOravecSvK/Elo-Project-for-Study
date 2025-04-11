@@ -37,9 +37,10 @@
 
 #         # Add the model's response to the conversation history
 #         conversation_history.append({"role": "assistant", "content": response.strip()})
-from chatgpt.chatgpt_run import run_chatgpt
-from gemini.gemini_run import run_gemini
-from claude.claude_run import run_claude
+from .chatgpt.chatgpt_run import run_chatgpt
+from .gemini.gemini_run import run_gemini
+from .claude.claude_run import run_claude
+from .random.random_run import run_random
 import pandas as pd
 import random
 import numpy as np
@@ -109,37 +110,49 @@ def update_elos(study_data, winner, loser, model):
         'loser_new_elo': loser_new_elo
     })
 
-def choose_events(study_data):
+def choose_events(study_data, event_selection='gaussian'):
     # Sort study_data by elo_rating
     study_data.sort_values(by='elo_rating', inplace=True, ascending=False)
     study_data.reset_index(drop=True, inplace=True)
 
     eligible_events = study_data[study_data['seen'] <= study_data['seen'].mean()]
-    
     if len(eligible_events) < 2:
         eligible_events = study_data
 
+    # sample second event pairing according to Gaussian distribution
     index1 = random.randint(0, len(eligible_events) - 1)
+    if event_selection == 'gaussian':
 
-    lower_bound = max(0, index1 - window_size)
-    upper_bound = min(len(eligible_events) - 1, index1 + window_size)
-    
-    indices = np.arange(lower_bound, upper_bound + 1)
+        lower_bound = max(0, index1 - window_size)
+        upper_bound = min(len(eligible_events) - 1, index1 + window_size)
+        
+        indices = np.arange(lower_bound, upper_bound + 1)
 
-    # Calculate probabilities using Gaussian PDF centered at index1
-    mean = index1
-    sigma = window_size / 2  # Standard deviation can be adjusted
-    probabilities = np.exp(-0.5 * ((indices - mean) / sigma) ** 2)
-    probabilities /= probabilities.sum()
+        # Calculate probabilities using Gaussian PDF centered at index1
+        mean = index1
+        sigma = window_size / 2  # Standard deviation can be adjusted
+        probabilities = np.exp(-0.5 * ((indices - mean) / sigma) ** 2)
+        probabilities /= probabilities.sum()
 
-    index2 = np.random.choice(indices, p=probabilities)
-    while index1 == index2:
         index2 = np.random.choice(indices, p=probabilities)
+        while index1 == index2:
+            index2 = np.random.choice(indices, p=probabilities)
+
+    # uniformly sample event pairings
+    elif event_selection == 'random':
+        index2 = random.randint(0, len(eligible_events) - 1)
+        while index2 == index1:
+            index2 = random.randint(0, len(eligible_events) - 1)
+
+    # Not a valid event_selection method
+    else:
+        raise ValueError(f"Invalid event_selection method: {event_selection}") 
 
     event1 = eligible_events.iloc[index1]
     event2 = eligible_events.iloc[index2]
 
     return event1, event2
+
 
 def save_results(study_data, model):
     # Save per model data
@@ -149,13 +162,14 @@ def save_results(study_data, model):
     study_data.to_csv(f'./data/output/{model}_study_data.csv', index=False)
     print(f"Results saved for model {model}")
 
-def run_comparison(study_data, prompt_intro, comparisons, model, llm_runner):
+
+def run_comparison(study_data, prompt_intro, comparisons, model, llm_runner, event_selection='gaussian'):
     conversation_history = [
         {"role": "system", "content": prompt_intro.strip()}
     ]
 
     for _ in range(comparisons):
-        event1, event2 = choose_events(study_data)
+        event1, event2 = choose_events(study_data, event_selection)
         choosing_better = random.random() < 0.5
 
         if choosing_better:
@@ -165,6 +179,7 @@ def run_comparison(study_data, prompt_intro, comparisons, model, llm_runner):
 
         conversation_history.append({"role": "user", "content": question.strip()})
         response = llm_runner(conversation_history, model)
+                
         if response is None:
             print("No response received. Skipping this comparison.")
             continue
@@ -193,22 +208,25 @@ if __name__ == "__main__":
     # To find Claude models visit:
     # https://docs.anthropic.com/en/docs/about-claude/models
     llm_models = {
-        # "chatgpt": ["gpt-3.5-turbo"],
+        "chatgpt": ["gpt-3.5-turbo"],
         # "gemini": ["gemini-1.5-flash"],
-        "claude": ["claude-3-5-sonnet-20241022"]
+        # "random": ['random']
+        #"claude": [
+            #"claude-3-5-sonnet-20241022",
+        #    "claude-3-5-haiku-20241022"
+        #]
     }
     llm_runners = {
-        # "chatgpt": run_chatgpt,
+        "chatgpt": run_chatgpt,
         # "gemini": run_gemini,
-        "claude": run_claude
+        # "claude": run_claude,
+        # "random": run_random
     }
 
-    # comparisons = 50
-    # sim_participants = 140
-    comparisons = 2
-    sim_participants = 2
-    study_data = load_study_data()
+    comparisons = 50
+    sim_participants = 140
 
+    study_data = load_study_data()    
     for llm, models in llm_models.items():
         for model in models:
             for _ in tqdm(range(sim_participants)):
